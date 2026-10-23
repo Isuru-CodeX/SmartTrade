@@ -1,0 +1,3 @@
+## 2023-10-23 - Hibernate N+1 issue in ContentService
+**Learning:** Paginated queries with collections (`JOIN FETCH` on `stocks` with `setMaxResults`) cause Hibernate to warn about in-memory pagination and fetch the entire result set, negating the optimization. We must carefully `JOIN FETCH` only to-one associations for paginated queries (e.g., `loadNewArrivalProducts` fetching `color`, `storage`, `quality`, `model`, `brand`).
+**Action:** Use `LEFT JOIN FETCH` for all `ManyToOne`/`OneToOne` relationships in lists. For collections (`OneToMany`), only `JOIN FETCH` them if the query doesn't use `setMaxResults` (like in `loadAllProducts`). Otherwise, either batch fetch or fetch sequentially for pagination.

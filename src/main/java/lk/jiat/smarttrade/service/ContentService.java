@@ -17,7 +17,13 @@ public class ContentService {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         List<Product> productList = hibernateSession.createQuery(
-                "FROM Product p WHERE NOT EXISTS (" +
+                "SELECT DISTINCT p FROM Product p " +
+                "LEFT JOIN FETCH p.color " +
+                "LEFT JOIN FETCH p.storage " +
+                "LEFT JOIN FETCH p.quality " +
+                "LEFT JOIN FETCH p.model m " +
+                "LEFT JOIN FETCH m.brand " +
+                "WHERE NOT EXISTS (" +
                 "   SELECT s FROM Stock s WHERE s.product = p AND s.status.value = 'REJECTED'" +
                 ") ORDER BY p.createdAt DESC", Product.class)
                 .setMaxResults(10)
@@ -63,8 +69,16 @@ public class ContentService {
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         try {
             List<Product> productList = hibernateSession.createQuery(
-                    "FROM Product p WHERE NOT EXISTS (" +
-                    "   SELECT s FROM Stock s WHERE s.product = p AND s.status.value = 'REJECTED'" +
+                    "SELECT DISTINCT p FROM Product p " +
+                    "LEFT JOIN FETCH p.color " +
+                    "LEFT JOIN FETCH p.storage " +
+                    "LEFT JOIN FETCH p.quality " +
+                    "LEFT JOIN FETCH p.model m " +
+                    "LEFT JOIN FETCH m.brand " +
+                    "LEFT JOIN FETCH p.stocks s " +
+                    "LEFT JOIN FETCH s.status " +
+                    "WHERE NOT EXISTS (" +
+                    "   SELECT s2 FROM Stock s2 WHERE s2.product = p AND s2.status.value = 'REJECTED'" +
                     ") ORDER BY p.createdAt DESC", Product.class)
                     .getResultList();
             List<ProductDTO> productDTOList = new ArrayList<>();
