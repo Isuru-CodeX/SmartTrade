@@ -831,6 +831,18 @@ public class AdminController {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             List<Brand> brands = session.createQuery("FROM Brand b ORDER BY b.name ASC", Brand.class).getResultList();
             com.google.gson.JsonArray arr = new com.google.gson.JsonArray();
+
+            List<Object[]> productCounts = session.createQuery(
+                    "SELECT p.model.brand.id, COUNT(p) FROM Product p GROUP BY p.model.brand.id",
+                    Object[].class
+            ).getResultList();
+
+            java.util.Map<Integer, Long> brandProductCounts = productCounts.stream()
+                    .collect(java.util.stream.Collectors.toMap(
+                            row -> (Integer) row[0],
+                            row -> (Long) row[1]
+                    ));
+
             for (Brand b : brands) {
                 JsonObject bObj = new JsonObject();
                 bObj.addProperty("id", b.getId());
@@ -850,9 +862,7 @@ public class AdminController {
                 }
                 bObj.add("models", mArr);
 
-                long productCount = session.createQuery("SELECT COUNT(p) FROM Product p WHERE p.model.brand.id = :bid", Long.class)
-                        .setParameter("bid", b.getId())
-                        .uniqueResult();
+                long productCount = brandProductCounts.getOrDefault(b.getId(), 0L);
                 bObj.addProperty("productsCount", productCount);
 
                 arr.add(bObj);
