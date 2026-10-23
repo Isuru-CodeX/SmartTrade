@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout | SmartTrade</title>
+    <meta name="description" content="Checkout on SmartTrade.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-receipt.css">
+
+    <style>
+        .stripe-checkout-box {
+            background: var(--st-surface-2, #1a252d);
+            border: 1px solid var(--st-line-2, #2c3d49);
+        }
+        .stripe-brand-icon {
+            font-size: 1.8rem;
+            color: var(--st-brand-3, #2bd97f);
+        }
+        .stripe-card-title {
+            font-size: 0.95rem;
+        }
+        .card-brand-badge {
+            background: #f2f5f4;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+        .card-input-wrap {
+            position: relative;
+        }
+        .card-brand-indicator {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--st-muted, #8b9ca6);
+            font-size: 1.25rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+        .card-element-mount {
+            padding: 12px 14px;
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            background: var(--st-surface, #141d24);
+            border: 1px solid var(--st-line-2, #2c3d49);
+            border-radius: 10px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .card-element-mount:focus-within,
+        .card-element-mount.StripeElement--focus {
+            border-color: var(--st-brand-3, #2bd97f);
+            box-shadow: 0 0 0 3px rgba(43, 217, 127, 0.15);
+        }
+        .card-element-mount.StripeElement--invalid {
+            border-color: #ff6b78;
+        }
+        .card-element-mount > div {
+            width: 100%;
+        }
+        .card-sandbox-hint {
+            background: rgba(43, 217, 127, 0.08);
+            border: 1px dashed rgba(43, 217, 127, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: var(--st-muted, #8b9ca6);
+        }
+        .card-errors-box {
+            display: none;
+        }
+        .card-errors-box:not(:empty) {
+            display: block;
+        }
+        .text-brand-green {
+            color: var(--st-brand-3, #2bd97f);
+        }
+        .text-st-muted {
+            color: var(--st-muted);
+        }
+    </style>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+
+<main class="st-main">
+    <div class="container">
+        <ul class="breadcrumb-st"><li><a href="index.html">Home</a></li><li><a href="cart.html">Cart</a></li><li>Checkout</li></ul>
+        <h1 class="page-title">Checkout</h1>
+        <p class="page-sub mb-4">Confirm where we should deliver and complete your payment securely with Stripe.</p>
+
+        <div id="checkoutEmpty" hidden></div>
+        <form class="checkout-layout" id="checkoutForm" novalidate hidden>
+            <div class="panel">
+                <h5 class="mb-3">Shipping details</h5>
+                <label class="check mb-3"><input type="checkbox" id="sameAddress"> Use my saved address</label>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="field mb-0"><label for="first-name">First name <small>*</small></label><input type="text" id="first-name" class="st-input" autocomplete="given-name"></div></div>
+                    <div class="col-md-6"><div class="field mb-0"><label for="last-name">Last name <small>*</small></label><input type="text" id="last-name" class="st-input" autocomplete="family-name"></div></div>
+                    <div class="col-12"><div class="field mb-0"><label for="email">Email address <small>*</small></label><input type="email" id="email" class="st-input" placeholder="receipt@example.com" autocomplete="email"></div></div>
+                    <div class="col-12"><div class="field mb-0"><label for="city-select">City <small>*</small></label><select id="city-select"><option value="0">Select</option></select></div></div>
+                    <div class="col-12"><div class="field mb-0"><label for="line-one">Address line 1 <small>*</small></label><input type="text" id="line-one" class="st-input" placeholder="House number and street name"></div></div>
+                    <div class="col-12"><div class="field mb-0"><label for="line-two">Address line 2</label><input type="text" id="line-two" class="st-input" placeholder="Apartment, suite, unit, etc."></div></div>
+                    <div class="col-md-6"><div class="field mb-0"><label for="postal-code">Postal code <small>*</small></label><input type="text" id="postal-code" class="st-input"></div></div>
+                    <div class="col-md-6"><div class="field mb-0"><label for="mobile">Mobile <small>*</small></label><input type="tel" id="mobile" class="st-input" placeholder="07XXXXXXXX"></div></div>
+                </div>
+
+                <h5 class="mt-4 mb-3">Delivery</h5>
+                <label class="ship-opt"><input type="radio" name="ship" value="1000" checked><span><b>Standard delivery</b><small>3&ndash;5 working days</small></span><span class="p">Rs. 1,000.00</span></label>
+                <label class="ship-opt"><input type="radio" name="ship" value="2500"><span><b>Express delivery</b><small>Next working day</small></span><span class="p">Rs. 2,500.00</span></label>
+
+                <h5 class="mt-4 mb-3">Payment</h5>
+                <div class="stripe-box p-3 rounded-3 mb-3 stripe-checkout-box">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa-brands fa-stripe text-brand stripe-brand-icon"></i>
+                            <div>
+                                <div class="fw-semibold text-white stripe-card-title">Credit or Debit Card Payment</div>
+                                <div class="small text-muted">Secured via Stripe Payment Gateway</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <img src="assets/images/icons/visa.png" alt="Visa" height="18" class="card-brand-badge">
+                            <img src="assets/images/icons/mastercard.png" alt="Mastercard" height="18" class="card-brand-badge">
+                        </div>
+                    </div>
+
+                    <!-- Cardholder Name -->
+                    <div class="field mb-3">
+                        <label for="card-name">Cardholder Name <small>*</small></label>
+                        <input type="text" id="card-name" class="st-input" placeholder="Name as printed on card" autocomplete="cc-name">
+                    </div>
+
+                    <!-- Card Number -->
+                    <div class="field mb-3">
+                        <label for="card-number-mount">Card Number <small>*</small></label>
+                        <div class="card-input-wrap">
+                            <div id="card-number-mount" class="st-input card-element-mount"></div>
+                            <div id="card-brand-icon" class="card-brand-indicator"><i class="fa-regular fa-credit-card"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Expiration Date & CVC / CVV -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <div class="field mb-0">
+                                <label for="card-expiry-mount">Expiration Date <small>*</small></label>
+                                <div id="card-expiry-mount" class="st-input card-element-mount"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field mb-0">
+                                <label for="card-cvc-mount">CVC / Security Code <small>*</small></label>
+                                <div id="card-cvc-mount" class="st-input card-element-mount"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="card-errors" class="text-danger small mt-2 card-errors-box"></div>
+
+                    <div class="card-sandbox-hint mt-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <div>
+                            <i class="fa-regular fa-circle-info text-brand-green me-1"></i>
+                            <span>Test card: <code class="text-white" style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px">4242 4242 4242 4242</code> &bull; Any future MM/YY &bull; Any 3 digits CVC</span>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">Stripe Sandbox Ready</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 mt-3 text-muted small">
+                        <i class="fa-solid fa-lock text-brand text-brand-green"></i>
+                        <span>End-to-end encrypted with 256-bit SSL via Stripe Gateway</span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="summary">
+                <h5>Your order</h5>
+                <div id="orderLines"></div>
+                <div class="ln"><span>Subtotal</span><span class="mono" id="ckSub"></span></div>
+                <div class="ln"><span>Delivery</span><span class="mono" id="ckShip"></span></div>
+                <div class="ln total"><span>Total</span><b id="ckTotal"></b></div>
+                <div class="pay-note">
+                    <i class="fa-regular fa-shield-check text-brand-green"></i>
+                    <span>Your payment is secured with Stripe. An official downloadable receipt will be generated instantly upon confirmation.</span>
+                </div>
+                <button class="st-btn st-btn-block" id="placeOrderBtn" type="submit">
+                    <i class="fa-regular fa-lock"></i> <span id="placeOrderText">Pay &amp; Place Order</span>
+                </button>
+                <p class="text-center small mt-3 mb-0 text-st-muted" id="ckSignin"></p>
+            </aside>
+        </form>
+    </div>
+</main>
+
+<footer-content class="st-footer"></footer-content>
+
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/receipt-renderer.js"></script>
+<script src="assets/js/checkout.js"></script>
+</body>
+</html>

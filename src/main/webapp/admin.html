@@ -1,0 +1,3309 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard | SmartTrade</title>
+    <meta name="description" content="SmartTrade Admin Control Panel - High performance dashboard">
+    <meta name="theme-color" content="#10171c">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <!-- CSS Vendor & Themes -->
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-receipt.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="assets/js/receipt-renderer.js"></script>
+
+    <style>
+        :root {
+            --sidebar-w: 260px;
+        }
+
+        /* Receipts Table Column Widths */
+        .col-receipt-no { width: 120px; }
+        .col-receipt-cust { min-width: 180px; }
+        .col-receipt-items { min-width: 240px; }
+        .col-receipt-delivery { min-width: 140px; }
+        .col-receipt-total { width: 130px; }
+        .col-receipt-status { width: 110px; }
+        .col-receipt-date { width: 130px; }
+        .col-receipt-actions { width: 160px; text-align: right; }
+
+        body {
+            background-color: var(--st-bg, #10171c);
+            color: var(--st-text, #e2e8f0);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Admin Shell Layout ── */
+        .admin-shell {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ── Sidebar ── */
+        .admin-sidebar {
+            width: var(--sidebar-w);
+            min-width: var(--sidebar-w);
+            background: var(--st-surface, #151e24);
+            border-right: 1px solid var(--st-line-2, #1f2c35);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .admin-sidebar-head {
+            padding: 1.4rem 1.25rem 1.1rem;
+            border-bottom: 1px solid var(--st-line, #1f2c35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-sidebar-head .brand-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-sidebar-head img {
+            height: 30px;
+            width: auto;
+            display: block;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--st-brand-soft, rgba(27, 219, 123, 0.12));
+            border: 1px solid var(--st-brand-line, rgba(27, 219, 123, 0.25));
+            color: var(--st-brand-3, #1bdb7b);
+            font: 600 0.65rem var(--st-mono, monospace);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            width: fit-content;
+        }
+
+        .sidebar-close-btn {
+            background: none;
+            border: 0;
+            color: var(--st-faint, #64748b);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            display: none;
+        }
+
+        .admin-sidebar-nav {
+            flex: 1;
+            padding: 1rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .admin-nav-section {
+            font: 600 0.62rem var(--st-mono, monospace);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--st-faint, #64748b);
+            padding: 0.85rem 0.6rem 0.35rem;
+        }
+
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            color: var(--st-text-2, #94a3b8);
+            font: 500 0.88rem var(--st-font-display, inherit);
+            background: none;
+            border: 0;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: all 0.15s ease;
+            text-decoration: none;
+        }
+
+        .admin-nav-link-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-nav-link i {
+            width: 20px;
+            text-align: center;
+            color: var(--st-faint, #64748b);
+            font-size: 0.95rem;
+            transition: color 0.15s ease;
+        }
+
+        .admin-nav-link:hover {
+            background: var(--st-surface-2, #1b262f);
+            color: var(--st-text, #e2e8f0);
+        }
+
+        .admin-nav-link:hover i {
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .admin-nav-link.active {
+            background: var(--st-brand-soft, rgba(27, 219, 123, 0.12));
+            color: var(--st-brand-3, #1bdb7b);
+            box-shadow: inset 3px 0 0 var(--st-brand-3, #1bdb7b);
+            font-weight: 600;
+        }
+
+        .admin-nav-link.active i {
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .nav-pill-badge {
+            background: var(--st-surface-2, #1e293b);
+            color: var(--st-muted, #94a3b8);
+            font: 600 0.7rem var(--st-mono, monospace);
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
+            border: 1px solid var(--st-line, #334155);
+        }
+
+        .nav-pill-badge.alert-pill {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+
+        .admin-sidebar-foot {
+            padding: 1rem 0.85rem;
+            border-top: 1px solid var(--st-line, #1f2c35);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .admin-user-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 10px;
+            background: var(--st-surface-2, #1a232a);
+        }
+
+        .admin-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--st-brand, #18a953);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .admin-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .admin-user-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--st-text, #fff);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .admin-user-email {
+            font-size: 0.75rem;
+            color: var(--st-muted, #8b9ca6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ── Main Layout ── */
+        .admin-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ── Topbar ── */
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1010;
+            background: rgba(16, 23, 28, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--st-line, #1f2c35);
+            padding: 0 1.5rem;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .admin-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .mobile-toggle-btn {
+            background: none;
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 8px;
+            color: var(--st-text, #e2e8f0);
+            width: 38px;
+            height: 38px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .admin-topbar-title {
+            font: 600 1.05rem var(--st-font-display, inherit);
+            color: var(--st-text, #e2e8f0);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin: 0;
+        }
+
+        .admin-topbar-title i {
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .admin-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-clock-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-line, #1f2c35);
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font: 500 0.78rem var(--st-mono, monospace);
+            color: var(--st-muted, #8b9ca6);
+        }
+
+        .admin-pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--st-brand-3, #1bdb7b);
+            box-shadow: 0 0 0 2px rgba(27, 219, 123, 0.25);
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(27, 219, 123, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(27, 219, 123, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(27, 219, 123, 0); }
+        }
+
+        .btn-topbar-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            border: 1px solid var(--st-line, #1f2c35);
+            background: var(--st-surface, #151e24);
+            color: var(--st-text, #e2e8f0);
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-topbar-action:hover {
+            border-color: var(--st-brand-line, rgba(27, 219, 123, 0.4));
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        /* ── Content Area ── */
+        .admin-content {
+            flex: 1;
+            padding: 1.75rem 2rem;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* ── Sections ── */
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Stat Cards Grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .stat-card {
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 14px;
+            padding: 1.35rem 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--st-brand-line, rgba(27, 219, 123, 0.35));
+            transform: translateY(-2px);
+        }
+
+        .stat-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .stat-card-label {
+            font: 600 0.72rem var(--st-mono, monospace);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--st-muted, #8b9ca6);
+        }
+
+        .stat-card-val {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--st-text, #fff);
+            font-family: var(--st-font-display, inherit);
+            line-height: 1.2;
+        }
+
+        .stat-card-sub {
+            font-size: 0.76rem;
+            color: var(--st-brand-3, #1bdb7b);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--st-brand-soft, rgba(27, 219, 123, 0.12));
+            color: var(--st-brand-3, #1bdb7b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        /* ── Action / Status Bar ── */
+        .system-banner {
+            background: linear-gradient(90deg, rgba(24, 169, 83, 0.12) 0%, rgba(16, 23, 28, 0.6) 100%);
+            border: 1px solid var(--st-brand-line, rgba(27, 219, 123, 0.25));
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .system-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .system-banner-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font: 600 0.75rem var(--st-mono, monospace);
+            color: var(--st-brand-3, #1bdb7b);
+            background: rgba(27, 219, 123, 0.15);
+            padding: 0.3rem 0.65rem;
+            border-radius: 999px;
+        }
+
+        .system-banner-text {
+            font-size: 0.88rem;
+            color: var(--st-text, #e2e8f0);
+        }
+
+        .system-banner-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* ── Charts Grid ── */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .charts-grid.three-col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .chart-card {
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 14px;
+            padding: 1.35rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .chart-card-head h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--st-text, #fff);
+        }
+
+        .chart-card-head h4 i {
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .chart-container-wrap {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            min-height: 240px;
+        }
+
+        .chart-container-centered {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── Dashboard Two-Column Tables ── */
+        .dash-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        /* ── Table Cards & Toolbars ── */
+        .table-card {
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-card-head {
+            padding: 1.2rem 1.25rem;
+            border-bottom: 1px solid var(--st-line, #1f2c35);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .table-card-head h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            color: var(--st-text, #fff);
+        }
+
+        .table-card-head h3 i {
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            min-width: 200px;
+        }
+
+        .search-input-wrap i {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--st-faint, #64748b);
+            font-size: 0.85rem;
+        }
+
+        .search-input-wrap input {
+            background: var(--st-bg, #10171c);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 8px;
+            color: var(--st-text, #e2e8f0);
+            font-size: 0.82rem;
+            padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input-wrap input:focus {
+            border-color: var(--st-brand-3, #1bdb7b);
+        }
+
+        .table-select {
+            background: var(--st-bg, #10171c);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 8px;
+            color: var(--st-text, #e2e8f0);
+            font-size: 0.82rem;
+            padding: 0.45rem 1.8rem 0.45rem 0.75rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .table-responsive-custom {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-responsive-custom table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .table-responsive-custom th {
+            background: rgba(16, 23, 28, 0.6);
+            color: var(--st-muted, #8b9ca6);
+            font: 600 0.7rem var(--st-mono, monospace);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--st-line, #1f2c35);
+            text-align: left;
+        }
+
+        .table-responsive-custom td {
+            padding: 0.9rem 1.25rem;
+            border-bottom: 1px solid var(--st-line, #1f2c35);
+            color: var(--st-text-2, #94a3b8);
+            vertical-align: middle;
+        }
+
+        .table-responsive-custom tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .table-responsive-custom tr:hover td {
+            background: rgba(27, 219, 123, 0.02);
+            color: var(--st-text, #fff);
+        }
+
+        /* ── Status Badges ── */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font: 600 0.7rem var(--st-mono, monospace);
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .status-badge.verified,
+        .status-badge.active,
+        .status-badge.approved,
+        .status-badge.completed {
+            background: rgba(27, 219, 123, 0.12);
+            color: #1bdb7b;
+            border: 1px solid rgba(27, 219, 123, 0.25);
+        }
+
+        .status-badge.pending,
+        .status-badge.packing {
+            background: rgba(234, 179, 8, 0.12);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+
+        .status-badge.delivered {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .status-badge.blocked,
+        .status-badge.rejected,
+        .status-badge.canceled {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        /* ── Action Buttons ── */
+        .btn-action-sm {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-action-sm.btn-approve {
+            background: rgba(27, 219, 123, 0.15);
+            color: #1bdb7b;
+            border-color: rgba(27, 219, 123, 0.3);
+        }
+
+        .btn-action-sm.btn-approve:hover {
+            background: #18a953;
+            color: #fff;
+        }
+
+        .btn-action-sm.btn-reject {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-action-sm.btn-reject:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn-action-sm.btn-outline {
+            background: var(--st-bg, #10171c);
+            color: var(--st-text, #e2e8f0);
+            border-color: var(--st-line, #1f2c35);
+        }
+
+        .btn-action-sm.btn-outline:hover {
+            border-color: var(--st-brand-3, #1bdb7b);
+            color: var(--st-brand-3, #1bdb7b);
+        }
+
+        /* ── Backdrop Overlay for Mobile ── */
+        .admin-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 1025;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .admin-backdrop.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ── Toast Notification ── */
+        .admin-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-brand-line, rgba(27, 219, 123, 0.3));
+            color: var(--st-text, #fff);
+            padding: 0.85rem 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.88rem;
+            z-index: 2000;
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+        }
+
+        .admin-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .admin-toast i {
+            color: var(--st-brand-3, #1bdb7b);
+            font-size: 1.1rem;
+        }
+
+        /* ── Empty State ── */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--st-muted, #8b9ca6);
+        }
+
+        .empty-state i {
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
+            color: var(--st-faint, #64748b);
+        }
+
+        /* ── Responsive Rules ── */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .dash-two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-toggle-btn {
+                display: flex;
+            }
+            .sidebar-close-btn {
+                display: block;
+            }
+            .admin-sidebar {
+                position: fixed;
+                top: 0; left: 0; bottom: 0;
+                transform: translateX(-100%);
+            }
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            .admin-content {
+                padding: 1.25rem 1rem;
+            }
+            .admin-topbar {
+                padding: 0 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-topbar-right .admin-clock-pill {
+                display: none;
+            }
+            .stat-card-val {
+                font-size: 1.5rem;
+            }
+            .table-card-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .table-toolbar {
+                width: 100%;
+            }
+            .search-input-wrap {
+                width: 100%;
+            }
+        }
+
+        /* ── Utility & Cell Styles ── */
+        .text-brand { color: var(--st-brand-3, #1bdb7b) !important; }
+        .text-white { color: var(--st-text, #fff) !important; }
+        .text-strong { color: var(--st-text, #fff) !important; font-weight: 600; }
+        .text-sub { font-size: 0.8rem; color: var(--st-muted, #8b9ca6); }
+        .text-sub-sm { font-size: 0.76rem; color: var(--st-muted, #8b9ca6); }
+        .cell-title-wrap { display: flex; align-items: center; gap: 0.65rem; }
+        .cell-title-text { font-weight: 600; color: var(--st-text, #fff); max-width: 280px; white-space: normal; display: inline-block; }
+        .cell-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 6px; border: 1px solid var(--st-line); }
+        .cell-thumb-icon { width: 36px; height: 36px; border-radius: 6px; background: var(--st-surface-2); display: inline-flex; align-items: center; justify-content: center; color: var(--st-faint); }
+        .cell-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--st-brand-soft); color: var(--st-brand-3); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; }
+        .cell-actions-row { display: flex; gap: 0.35rem; }
+        .select-table-sm { padding: 0.25rem 0.5rem; font-size: 0.78rem; }
+        .share-pill { font-family: var(--st-mono, monospace); font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(27, 219, 123, 0.12); color: #1bdb7b; border: 1px solid rgba(27, 219, 123, 0.25); }
+        .st-progress {
+            width: 75px;
+            height: 6px;
+            appearance: none;
+            -webkit-appearance: none;
+            border-radius: 999px;
+            overflow: hidden;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+            border: 0;
+            background: var(--st-line, #1f2c35);
+        }
+        .st-progress::-webkit-progress-bar {
+            background-color: var(--st-line, #1f2c35);
+            border-radius: 999px;
+        }
+        .st-progress::-webkit-progress-value {
+            background-color: var(--st-brand-3, #1bdb7b);
+            border-radius: 999px;
+        }
+        .st-progress::-moz-progress-bar {
+            background-color: var(--st-brand-3, #1bdb7b);
+            border-radius: 999px;
+        }
+        .catalog-card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+        .catalog-brand-select {
+            max-width: 180px;
+        }
+
+        /* ── Catalog Brands & Models Table Redesign ── */
+        .brand-cell-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .brand-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.92rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(27,219,123,0.18), rgba(56,189,248,0.12));
+            color: #1bdb7b;
+            border: 1px solid rgba(27,219,123,0.25);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .brand-name-text {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+        .brand-meta-sub {
+            font-size: 0.72rem;
+            color: var(--st-faint, #64748b);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .model-chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            max-width: 540px;
+        }
+        .catalog-model-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--st-surface-2, #1b262f);
+            border: 1px solid var(--st-line-2, #243440);
+            color: var(--st-text, #e2e8f0);
+            padding: 0.22rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .catalog-model-pill:hover {
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        .catalog-model-del-btn {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            margin-left: 0.25rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .catalog-model-del-btn:hover {
+            color: #ef4444;
+        }
+        .catalog-add-model-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(27,219,123,0.08);
+            border: 1px dashed rgba(27,219,123,0.35);
+            color: #1bdb7b;
+            padding: 0.22rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.74rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .catalog-add-model-btn:hover {
+            background: rgba(27,219,123,0.18);
+            border-color: #1bdb7b;
+            color: #fff;
+        }
+        .catalog-no-models {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #64748b;
+            font-size: 0.78rem;
+            font-style: italic;
+        }
+        .active-listing-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font: 600 0.75rem var(--st-mono, monospace);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        .dot-active {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 6px #38bdf8;
+        }
+        .table-filter-select {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            min-width: 140px;
+            background: var(--st-bg, #10171c);
+        }
+        .col-catalog-idx { width: 70px; }
+        .col-catalog-brand { min-width: 200px; }
+        .col-catalog-models { min-width: 320px; }
+        .col-catalog-active { width: 140px; }
+        .col-catalog-actions { width: 110px; }
+    </style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+    <!-- Mobile Drawer Backdrop -->
+    <div class="admin-backdrop" id="adminBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- ── Sidebar ── -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-head">
+            <div class="brand-wrap">
+                <a href="admin.html">
+                    <img src="assets/images/logo/logo-light.png" alt="SmartTrade">
+                </a>
+                <span class="admin-badge">
+                    <i class="fa-solid fa-shield-halved"></i> Admin Control
+                </span>
+            </div>
+            <button type="button" class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Close menu">
+                <i class="fa-regular fa-xmark"></i>
+            </button>
+        </div>
+
+        <nav class="admin-sidebar-nav">
+            <span class="admin-nav-section">Main</span>
+            <button type="button" class="admin-nav-link active" onclick="switchSection('dashboard', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-gauge-high"></i> Dashboard
+                </span>
+            </button>
+
+            <span class="admin-nav-section">Management</span>
+            <button type="button" class="admin-nav-link" onclick="switchSection('orders', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-receipt"></i> Orders
+                </span>
+                <span class="nav-pill-badge" id="badge-orders">0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('receipts', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-file-invoice-dollar"></i> Customer Receipts
+                </span>
+                <span class="nav-pill-badge" id="badge-receipts">0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('products', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-boxes-stacked"></i> Products
+                </span>
+                <span class="nav-pill-badge" id="badge-products">0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('customers', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-users"></i> Customers
+                </span>
+                <span class="nav-pill-badge" id="badge-customers">0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('sellers', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-store"></i> Sellers
+                </span>
+                <span class="nav-pill-badge" id="badge-sellers">0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('catalog', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-tags"></i> Catalog
+                </span>
+                <span class="nav-pill-badge" id="badge-brands">0</span>
+            </button>
+
+            <span class="admin-nav-section">Insights</span>
+            <button type="button" class="admin-nav-link" onclick="switchSection('revenue', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-chart-line-up"></i> Revenue
+                </span>
+                <span class="nav-pill-badge" id="badge-revenue">Rs. 0</span>
+            </button>
+            <button type="button" class="admin-nav-link" onclick="switchSection('finance', this)">
+                <span class="admin-nav-link-content">
+                    <i class="fa-regular fa-chart-pie"></i> Financials
+                </span>
+            </button>
+        </nav>
+
+        <div class="admin-sidebar-foot">
+            <div class="admin-user-card">
+                <div class="admin-user-avatar" id="sidebarAvatar">A</div>
+                <div class="admin-user-info">
+                    <div class="admin-user-name" id="sidebarAdminName">Admin User</div>
+                    <div class="admin-user-email" id="sidebarAdminEmail">admin@gmail.com</div>
+                </div>
+            </div>
+            <button type="button" class="btn-topbar-action text-danger border-0 justify-content-center mt-1" onclick="logoutAdmin()">
+                <i class="fa-regular fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ── Main Area ── -->
+    <div class="admin-main">
+
+        <!-- Topbar -->
+        <header class="admin-topbar">
+            <div class="admin-topbar-left">
+                <button type="button" class="mobile-toggle-btn" onclick="toggleSidebar()" aria-label="Open menu">
+                    <i class="fa-regular fa-bars"></i>
+                </button>
+                <h1 class="admin-topbar-title" id="pageTitle">
+                    <i class="fa-regular fa-gauge-high"></i> Dashboard
+                </h1>
+            </div>
+
+            <div class="admin-topbar-right">
+                <div class="admin-clock-pill">
+                    <span class="admin-pulse-dot"></span>
+                    <span id="clockDisplay">--:--</span>
+                </div>
+                <button type="button" class="btn-topbar-action" onclick="refreshData()" title="Reload data">
+                    <i class="fa-regular fa-rotate" id="refreshIcon"></i> Refresh
+                </button>
+                <a href="index.html" target="_blank" class="btn-topbar-action d-none d-sm-inline-flex" title="View Storefront">
+                    <i class="fa-regular fa-arrow-up-right-from-square"></i> Store
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content Body -->
+        <main class="admin-content">
+
+            <!-- ════════════════════ SECTION: DASHBOARD ════════════════════ -->
+            <section id="section-dashboard" class="admin-section active">
+
+                <!-- System Banner -->
+                <div class="system-banner">
+                    <div class="system-banner-left">
+                        <span class="system-banner-badge">
+                            <i class="fa-regular fa-check"></i> System Operational
+                        </span>
+                        <span class="system-banner-text">
+                            Connected to MySQL database &bull; Admin: <strong id="bannerAdminEmail">admin@gmail.com</strong>
+                        </span>
+                    </div>
+                    <div class="system-banner-actions">
+                        <button type="button" class="btn-action-sm btn-outline" onclick="switchSection('sellers', document.querySelectorAll('.admin-nav-link')[4])">
+                            <i class="fa-regular fa-store"></i> Review Sellers
+                        </button>
+                        <button type="button" class="btn-action-sm btn-approve" onclick="switchSection('orders', document.querySelectorAll('.admin-nav-link')[1])">
+                            <i class="fa-regular fa-receipt"></i> View Orders
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4 Stat Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Revenue</span>
+                            <span class="stat-card-val" id="stat-revenue">Rs. 0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-arrow-up-right"></i> Real-time orders</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-circle-dollar"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Orders</span>
+                            <span class="stat-card-val" id="stat-orders">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-box-check"></i> Placed in store</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-receipt"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Active Customers</span>
+                            <span class="stat-card-val" id="stat-users">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-users"></i> Registered users</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-users"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Verified Sellers</span>
+                            <span class="stat-card-val" id="stat-sellers">0</span>
+                            <span class="stat-card-sub" id="stat-pending-sub"><i class="fa-regular fa-store"></i> Active merchants</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-store"></i></div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-simple"></i> Monthly Revenue Trend</h4>
+                            <span class="badge status-badge verified">Active Sales Months</span>
+                        </div>
+                        <div class="chart-container-wrap">
+                            <canvas id="dashRevenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-pie"></i> Marketplace Split</h4>
+                            <span class="badge status-badge pending">Ratio</span>
+                        </div>
+                        <div class="chart-container-wrap chart-container-centered">
+                            <canvas id="dashSplitChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity (Two Columns) -->
+                <div class="dash-two-col">
+                    <!-- Recent Orders -->
+                    <div class="table-card">
+                        <div class="table-card-head">
+                            <h3><i class="fa-regular fa-receipt"></i> Recent Orders</h3>
+                            <button type="button" class="btn-action-sm btn-outline" onclick="switchSection('orders', document.querySelectorAll('.admin-nav-link')[1])">
+                                All Orders &rarr;
+                            </button>
+                        </div>
+                        <div class="table-responsive-custom">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Order ID</th>
+                                        <th scope="col">Customer</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-orders-tbody">
+                                    <tr><td colspan="5" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Recent Customers -->
+                    <div class="table-card">
+                        <div class="table-card-head">
+                            <h3><i class="fa-regular fa-user-plus"></i> Recent Customers</h3>
+                            <button type="button" class="btn-action-sm btn-outline" onclick="switchSection('customers', document.querySelectorAll('.admin-nav-link')[3])">
+                                All Customers &rarr;
+                            </button>
+                        </div>
+                        <div class="table-responsive-custom">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-cust-tbody">
+                                    <tr><td colspan="5" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ════════════════════ SECTION: ORDERS ════════════════════ -->
+            <section id="section-orders" class="admin-section">
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-receipt"></i> Customer Orders Management</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="orderSearch" placeholder="Search customer or order..." oninput="filterOrders()">
+                            </div>
+                            <select id="orderStatusFilter" class="table-select" onchange="filterOrders()">
+                                <option value="">All Statuses</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="PACKING">Packing</option>
+                                <option value="DELIVERED">Delivered</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="CANCELED">Canceled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Order #</th>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Delivery Type</th>
+                                    <th scope="col">Items</th>
+                                    <th scope="col">Total Amount</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Order Date</th>
+                                    <th scope="col">Update Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <tr><td colspan="8" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading orders...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════ SECTION: CUSTOMER PURCHASES & RECEIPTS ════════════════════ -->
+            <section id="section-receipts" class="admin-section">
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-file-invoice-dollar"></i> Customer Purchases &amp; Receipts</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="receiptSearch" placeholder="Search customer, order #, or item..." oninput="filterCustomerReceipts()">
+                            </div>
+                            <select id="receiptStatusFilter" class="table-select" onchange="filterCustomerReceipts()">
+                                <option value="">All Statuses</option>
+                                <option value="COMPLETED">Completed</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="PACKING">Packing</option>
+                                <option value="DELIVERED">Delivered</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="CANCELED">Canceled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-receipt-no">Receipt #</th>
+                                    <th scope="col" class="col-receipt-cust">Customer</th>
+                                    <th scope="col" class="col-receipt-items">Purchased Items</th>
+                                    <th scope="col" class="col-receipt-delivery">Delivery Info</th>
+                                    <th scope="col" class="col-receipt-total">Total Amount</th>
+                                    <th scope="col" class="col-receipt-status">Status</th>
+                                    <th scope="col" class="col-receipt-date">Order Date</th>
+                                    <th scope="col" class="col-receipt-actions">Receipt Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receipts-tbody">
+                                <tr><td colspan="8" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading customer receipts...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════ SECTION: PRODUCTS ════════════════════ -->
+            <section id="section-products" class="admin-section">
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-boxes-stacked"></i> Products Inventory</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="productSearch" placeholder="Search title or brand..." oninput="filterProducts()">
+                            </div>
+                            <select id="productStatusFilter" class="st-input table-filter-select" onchange="filterProducts()">
+                                <option value="ALL">All Status</option>
+                                <option value="APPROVED">Approved</option>
+                                <option value="REJECTED">Rejected</option>
+                                <option value="PENDING">Pending</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Product Title</th>
+                                    <th scope="col">Brand / Model</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Stock</th>
+                                    <th scope="col">Seller</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Added Date</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-tbody">
+                                <tr><td colspan="9" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading products...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════ SECTION: CUSTOMERS ════════════════════ -->
+            <section id="section-customers" class="admin-section">
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-users"></i> Registered Customers</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="custSearch" placeholder="Search name or email..." oninput="filterCustomers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">User ID</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Email Address</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Registered Date</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customers-tbody">
+                                <tr><td colspan="6" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading customers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════ SECTION: SELLERS ════════════════════ -->
+            <section id="section-sellers" class="admin-section">
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-store"></i> Merchant &amp; Seller Accounts</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="sellerSearch" placeholder="Search company or email..." oninput="filterSellers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Seller ID</th>
+                                    <th scope="col">Company Name</th>
+                                    <th scope="col">Owner</th>
+                                    <th scope="col">Contact Mobile</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Products</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sellers-tbody">
+                                <tr><td colspan="8" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading sellers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════════════ SECTION: REVENUE ════════════════════ -->
+            <section id="section-revenue" class="admin-section">
+
+                <!-- Summary KPI Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Store Revenue</span>
+                            <span class="stat-card-val text-brand" id="rev-total-revenue">Rs. 0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-circle-check"></i> Real-time orders</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-circle-dollar"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Paid Orders</span>
+                            <span class="stat-card-val" id="rev-total-orders">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-receipt"></i> Completed transactions</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-box-check"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Avg Order Value</span>
+                            <span class="stat-card-val" id="rev-avg-order">Rs. 0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-calculator"></i> Per placed order</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-chart-simple"></i></div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Top Earning Product</span>
+                            <span class="stat-card-val text-strong" id="rev-top-product" title="Top Product">—</span>
+                            <span class="stat-card-sub" id="rev-top-product-sub"><i class="fa-regular fa-trophy"></i> Highest contributor</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-award"></i></div>
+                    </div>
+                </div>
+
+                <!-- Revenue Charts (Monthly Revenue + Top Product Share) -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-column"></i> Monthly Working Revenue</h4>
+                            <span class="badge status-badge verified">Active Months Only</span>
+                        </div>
+                        <div class="chart-container-wrap">
+                            <canvas id="revMonthlyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-pie"></i> Revenue by Product Share</h4>
+                            <span class="badge status-badge pending">Distribution</span>
+                        </div>
+                        <div class="chart-container-wrap chart-container-centered">
+                            <canvas id="revSplitChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Revenue by Product Table -->
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-boxes-stacked"></i> Revenue by Product</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="revProductSearch" placeholder="Search product or seller..." oninput="filterRevProducts()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product ID</th>
+                                    <th scope="col">Product Title</th>
+                                    <th scope="col">Seller / Merchant</th>
+                                    <th scope="col">Units Sold</th>
+                                    <th scope="col">Total Revenue</th>
+                                    <th scope="col">Revenue Share</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rev-products-tbody">
+                                <tr><td colspan="6" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading product revenue...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Revenue by Seller Table -->
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-store"></i> Revenue by Seller / Merchant</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="revSellerSearch" placeholder="Search seller..." oninput="filterRevSellers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Seller ID</th>
+                                    <th scope="col">Company Name</th>
+                                    <th scope="col">Orders Count</th>
+                                    <th scope="col">Units Sold</th>
+                                    <th scope="col">Total Revenue</th>
+                                    <th scope="col">Revenue Share</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rev-sellers-tbody">
+                                <tr><td colspan="6" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading seller revenue...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Revenue by Customer Table -->
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-users"></i> Revenue by Customer</h3>
+                        <div class="table-toolbar">
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="revCustomerSearch" placeholder="Search customer or email..." oninput="filterRevCustomers()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive-custom">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Customer ID</th>
+                                    <th scope="col">Customer Name</th>
+                                    <th scope="col">Email Address</th>
+                                    <th scope="col">Orders Placed</th>
+                                    <th scope="col">Total Spent</th>
+                                    <th scope="col">Revenue Share</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rev-customers-tbody">
+                                <tr><td colspan="6" class="empty-state"><i class="fa-regular fa-spinner fa-spin"></i> Loading customer revenue...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- ════════════════════ SECTION: FINANCIALS ════════════════════ -->
+            <section id="section-finance" class="admin-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Gross Revenue</span>
+                            <span class="stat-card-val" id="fin-revenue">Rs. 0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-arrow-up"></i> Inflow</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-wallet"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Estimated Expenses</span>
+                            <span class="stat-card-val text-warning" id="fin-expenses">Rs. 0</span>
+                            <span class="stat-card-sub text-warning"><i class="fa-regular fa-arrow-down"></i> Outflow (35%)</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-credit-card"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Net Profit</span>
+                            <span class="stat-card-val text-success" id="fin-profit">Rs. 0</span>
+                            <span class="stat-card-sub text-success"><i class="fa-regular fa-chart-line-up"></i> Net Gain</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-coins"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Profit Margin</span>
+                            <span class="stat-card-val">65.0%</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-shield-check"></i> Healthy margin</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-percent"></i></div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-column"></i> Monthly Financial Performance</h4>
+                        </div>
+                        <div class="chart-container-wrap">
+                            <canvas id="financeBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-card-head">
+                            <h4><i class="fa-regular fa-chart-line"></i> Cumulative Profit Curve</h4>
+                        </div>
+                        <div class="chart-container-wrap">
+                            <canvas id="financeLineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ════════════ CATALOG MANAGEMENT SECTION ════════════ -->
+            <section class="admin-section" id="section-catalog">
+                <div class="stats-grid mb-4">
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Brands</span>
+                            <span class="stat-card-val" id="catalogBrandCount">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-tags"></i> Device Manufacturers</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-mobile"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Total Models</span>
+                            <span class="stat-card-val" id="catalogModelCount">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-diagram-project"></i> Linked Phone Models</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-list-tree"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Storage Sizes</span>
+                            <span class="stat-card-val" id="catalogStorageCount">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-hard-drive"></i> Configured Variants</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-database"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-info">
+                            <span class="stat-card-label">Colour Variants</span>
+                            <span class="stat-card-val" id="catalogColorCount">0</span>
+                            <span class="stat-card-sub"><i class="fa-regular fa-palette"></i> Finishes Available</span>
+                        </div>
+                        <div class="stat-card-icon"><i class="fa-regular fa-palette"></i></div>
+                    </div>
+                </div>
+
+                <!-- Add quick bar -->
+                <div class="dash-two-col mb-4">
+                    <!-- Quick Add Brand -->
+                    <div class="table-card p-3">
+                        <h4 class="mb-2 catalog-card-title"><i class="fa-solid fa-plus text-brand me-2"></i>Add New Brand</h4>
+                        <p class="text-sub-sm mb-3">Add a new device manufacturer into the platform catalog.</p>
+                        <div class="d-flex gap-2">
+                            <input type="text" id="adminNewBrandName" class="st-input" placeholder="Brand name (e.g. Apple, OnePlus)">
+                            <button type="button" class="btn-action-sm btn-approve px-3" onclick="adminAddBrand()"><i class="fa-solid fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Add Model -->
+                    <div class="table-card p-3">
+                        <h4 class="mb-2 catalog-card-title"><i class="fa-solid fa-plus text-brand me-2"></i>Add Model to Brand</h4>
+                        <p class="text-sub-sm mb-3">Model is automatically linked to the selected parent brand.</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <select id="adminModelBrandSelect" class="st-input catalog-brand-select">
+                                <option value="0">Select Brand</option>
+                            </select>
+                            <input type="text" id="adminNewModelName" class="st-input flex-grow-1" placeholder="Model name (e.g. iPhone 16 Pro)">
+                            <button type="button" class="btn-action-sm btn-approve px-3" onclick="adminAddModel()"><i class="fa-solid fa-plus"></i> Link</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brands & Linked Models Table -->
+                <div class="table-card">
+                    <div class="table-card-head">
+                        <h3><i class="fa-regular fa-tags"></i> Brands &amp; Linked Models</h3>
+                        <div class="table-toolbar">
+                            <span class="badge bg-dark border text-muted" id="catalogResultBadge">Loading...</span>
+                            <div class="search-input-wrap">
+                                <i class="fa-regular fa-magnifying-glass"></i>
+                                <input type="text" id="catalogSearch" placeholder="Search brands or models..." onkeyup="filterCatalogTable(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive-custom">
+                        <table id="catalogTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="col-catalog-idx">#</th>
+                                    <th scope="col" class="col-catalog-brand">Brand</th>
+                                    <th scope="col" class="col-catalog-models">Linked Models</th>
+                                    <th scope="col" class="col-catalog-active">Active Listings</th>
+                                    <th scope="col" class="col-catalog-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalogTbody">
+                                <tr><td colspan="5" class="empty-state"><i class="fa-regular fa-spinner fa-spin me-2"></i>Loading catalog...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+</div>
+
+<!-- Toast notification element -->
+<div class="admin-toast" id="adminToast">
+    <i class="fa-regular fa-circle-check" id="toastIcon"></i>
+    <span id="toastMsg">Operation successful</span>
+</div>
+
+<!-- Vendor Scripts -->
+<script src="assets/js/vendor/popper.min.js"></script>
+<script src="assets/js/vendor/bootstrap.min.js"></script>
+
+<script>
+    /* ── Configuration & State ── */
+    const API = 'api/admin';
+    let currentSection = 'dashboard';
+    let rawCustomers = [];
+    let rawSellers = [];
+    let rawProducts = [];
+    let rawOrders = [];
+
+    Chart.defaults.color = '#8b9ca6';
+    Chart.defaults.borderColor = '#1f2c35';
+    Chart.defaults.font.family = "'Segoe UI', system-ui, -apple-system, sans-serif";
+
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const REVENUE_SERIES = [35000, 48000, 42000, 58000, 69000, 62000, 81000, 75000, 96000, 89000, 112000, 134000];
+    const EXPENSE_SERIES = [12000, 16800, 14700, 20300, 24150, 21700, 28350, 26250, 33600, 31150, 39200, 46900];
+
+    /* ── Clock ── */
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clockDisplay').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    /* ── Sidebar Mobile Controls ── */
+    function toggleSidebar() {
+        const sb = document.getElementById('adminSidebar');
+        const bd = document.getElementById('adminBackdrop');
+        sb.classList.toggle('open');
+        bd.classList.toggle('show');
+    }
+
+    function closeSidebar() {
+        document.getElementById('adminSidebar').classList.remove('open');
+        document.getElementById('adminBackdrop').classList.remove('show');
+    }
+
+    /* ── Toast Utility ── */
+    let toastTimeout;
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('adminToast');
+        const icon = document.getElementById('toastIcon');
+        document.getElementById('toastMsg').textContent = message;
+        if (isError) {
+            icon.className = 'fa-regular fa-circle-exclamation text-danger';
+        } else {
+            icon.className = 'fa-regular fa-circle-check text-success';
+        }
+        toast.classList.add('show');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3200);
+    }
+
+    /* ── Auth Validation & Initial Data ── */
+    function initAdmin() {
+        fetch(`${API}/me`, { credentials: 'same-origin' })
+            .then(res => {
+                if (!res.ok) {
+                    window.location.href = 'admin-login.html';
+                    return null;
+                }
+                return res.json();
+            })
+            .then(admin => {
+                if (!admin || !admin.email) {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+                document.getElementById('sidebarAdminName').textContent = admin.name || 'Admin User';
+                document.getElementById('sidebarAdminEmail').textContent = admin.email || 'admin@gmail.com';
+                document.getElementById('bannerAdminEmail').textContent = admin.email || 'admin@gmail.com';
+                if (admin.name) {
+                    document.getElementById('sidebarAvatar').textContent = admin.name.charAt(0).toUpperCase();
+                }
+                loadDashboardStats();
+            })
+            .catch(() => {
+                window.location.href = 'admin-login.html';
+            });
+    }
+
+    /* ── Section Switcher ── */
+    const sectionMeta = {
+        dashboard: { title: 'Dashboard', icon: 'fa-gauge-high' },
+        orders:    { title: 'Orders', icon: 'fa-receipt' },
+        receipts:  { title: 'Customer Purchases & Receipts', icon: 'fa-file-invoice-dollar' },
+        products:  { title: 'Products', icon: 'fa-boxes-stacked' },
+        customers: { title: 'Customers', icon: 'fa-users' },
+        sellers:   { title: 'Sellers', icon: 'fa-store' },
+        catalog:   { title: 'Catalog Management', icon: 'fa-tags' },
+        revenue:   { title: 'Revenue Analytics', icon: 'fa-chart-line-up' },
+        finance:   { title: 'Financials', icon: 'fa-chart-pie' }
+    };
+
+    function switchSection(name, btn) {
+        currentSection = name;
+        closeSidebar();
+
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById('section-' + name);
+        if (target) target.classList.add('active');
+
+        document.querySelectorAll('.admin-nav-link').forEach(l => l.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        const meta = sectionMeta[name] || { title: 'Dashboard', icon: 'fa-gauge-high' };
+        document.getElementById('pageTitle').innerHTML = `<i class="fa-regular ${meta.icon}"></i> ${meta.title}`;
+
+        if (name === 'dashboard') loadDashboardStats();
+        if (name === 'orders')    loadOrders();
+        if (name === 'receipts')  loadCustomerReceipts();
+        if (name === 'products')  loadProducts();
+        if (name === 'customers') loadCustomers();
+        if (name === 'sellers')   loadSellers();
+        if (name === 'catalog')   loadCatalogData();
+        if (name === 'revenue')   loadRevenueReport();
+        if (name === 'finance')   buildFinanceCharts();
+    }
+
+    function refreshData() {
+        const icon = document.getElementById('refreshIcon');
+        icon.classList.add('fa-spin');
+        if (currentSection === 'dashboard') loadDashboardStats();
+        else if (currentSection === 'orders') loadOrders(true);
+        else if (currentSection === 'receipts') loadCustomerReceipts(true);
+        else if (currentSection === 'products') loadProducts(true);
+        else if (currentSection === 'customers') loadCustomers(true);
+        else if (currentSection === 'sellers') loadSellers(true);
+        else if (currentSection === 'catalog') loadCatalogData(true);
+        else if (currentSection === 'revenue') loadRevenueReport(true);
+        else if (currentSection === 'finance') buildFinanceCharts();
+        setTimeout(() => {
+            icon.classList.remove('fa-spin');
+            showToast('Dashboard data refreshed');
+        }, 600);
+    }
+
+    /* ════════════════════ CATALOG MANAGEMENT ════════════════════ */
+    let rawCatalogBrands = [];
+
+    async function loadCatalogData(silent = false) {
+        try {
+            const [brandRes, specRes] = await Promise.all([
+                fetch(`${API}/brands-overview`, { credentials: 'same-origin' }),
+                fetch(`api/data/specifications`)
+            ]);
+
+            if (brandRes.ok) {
+                const data = await brandRes.json();
+                if (data.status === 'success') {
+                    rawCatalogBrands = data.brands || [];
+                    document.getElementById('catalogBrandCount').textContent = rawCatalogBrands.length;
+                    const badge = document.getElementById('badge-brands');
+                    if (badge) badge.textContent = rawCatalogBrands.length;
+                    let totalModels = 0;
+                    rawCatalogBrands.forEach(b => totalModels += (b.modelsCount || 0));
+                    document.getElementById('catalogModelCount').textContent = totalModels;
+
+                    const brandSelect = document.getElementById('adminModelBrandSelect');
+                    if (brandSelect) {
+                        const curVal = brandSelect.value;
+                        brandSelect.innerHTML = '<option value="0">Select Brand</option>';
+                        rawCatalogBrands.forEach(b => {
+                            const opt = document.createElement('option');
+                            opt.value = b.id;
+                            opt.textContent = b.name;
+                            brandSelect.appendChild(opt);
+                        });
+                        brandSelect.value = curVal || '0';
+                    }
+
+                    renderCatalogTable(rawCatalogBrands);
+                }
+            }
+
+            if (specRes.ok) {
+                const specData = await specRes.json();
+                if (specData.storages) {
+                    document.getElementById('catalogStorageCount').textContent = specData.storages.length;
+                }
+                if (specData.colors) {
+                    document.getElementById('catalogColorCount').textContent = specData.colors.length;
+                }
+            }
+        } catch (e) {
+            console.error('Error loading catalog:', e);
+            if (!silent) showToast('Failed to load catalog data', true);
+        }
+    }
+
+    function renderCatalogTable(brands) {
+        const tbody = document.getElementById('catalogTbody');
+        const badge = document.getElementById('catalogResultBadge');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+
+        if (badge) {
+            badge.textContent = `${brands ? brands.length : 0} Brands`;
+        }
+
+        if (!brands || !brands.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state text-muted"><i class="fa-regular fa-tags mb-2 d-block" style="font-size:1.5rem"></i>No brands found.</td></tr>';
+            return;
+        }
+
+        brands.forEach((b, idx) => {
+            const tr = document.createElement('tr');
+            const initial = (b.name ? b.name.charAt(0) : 'B').toUpperCase();
+            const modelsCount = (b.models && b.models.length) ? b.models.length : 0;
+            
+            let modelsHtml = '';
+            if (modelsCount > 0) {
+                modelsHtml = '<div class="model-chips-container">' + b.models.map(m => 
+                    `<span class="catalog-model-pill" title="Model ID: #${m.id}">` +
+                    `<i class="fa-regular fa-mobile-screen text-muted me-1" style="font-size:0.7rem"></i>` +
+                    escapeHtml(m.name) +
+                    ` <button type="button" class="catalog-model-del-btn" onclick="adminDeleteModel(${m.id}, '${escapeHtml(m.name)}')" title="Delete model"><i class="fa-solid fa-xmark"></i></button>` +
+                    `</span>`
+                ).join('') + 
+                `<button type="button" class="catalog-add-model-btn" onclick="quickSelectBrandForModel(${b.id})" title="Add model to ${escapeHtml(b.name)}"><i class="fa-solid fa-plus"></i> Add Model</button>` +
+                '</div>';
+            } else {
+                modelsHtml = '<div class="model-chips-container">' +
+                    '<span class="catalog-no-models"><i class="fa-regular fa-circle-exclamation me-1"></i>No models yet</span>' +
+                    `<button type="button" class="catalog-add-model-btn ms-2" onclick="quickSelectBrandForModel(${b.id})" title="Add model to ${escapeHtml(b.name)}"><i class="fa-solid fa-plus"></i> Add Model</button>` +
+                    '</div>';
+            }
+
+            const activeListingsHtml = (b.productsCount && b.productsCount > 0)
+                ? `<span class="active-listing-tag"><span class="dot-active"></span>${b.productsCount} listed</span>`
+                : `<span class="text-sub-sm text-muted">0 listed</span>`;
+
+            tr.innerHTML = `
+                <td class="mono text-muted">#${idx + 1}</td>
+                <td>
+                    <div class="brand-cell-wrap">
+                        <div class="brand-avatar">${initial}</div>
+                        <div>
+                            <div class="brand-name-text">${escapeHtml(b.name)}</div>
+                            <div class="brand-meta-sub">
+                                <span class="badge bg-dark border text-muted" style="font-size:0.68rem;padding:0.15rem 0.45rem">${modelsCount} model${modelsCount === 1 ? '' : 's'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>${modelsHtml}</td>
+                <td>${activeListingsHtml}</td>
+                <td>
+                    <button type="button" class="btn-action-sm btn-reject" onclick="adminDeleteBrand(${b.id}, '${escapeHtml(b.name)}')" title="Delete brand">
+                        <i class="fa-regular fa-trash"></i> Delete
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function quickSelectBrandForModel(brandId) {
+        const select = document.getElementById('adminModelBrandSelect');
+        const input = document.getElementById('adminNewModelName');
+        if (select) {
+            select.value = String(brandId);
+            select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (input) {
+            setTimeout(() => input.focus(), 200);
+        }
+    }
+
+    function filterCatalogTable(query) {
+        const q = (query || '').toLowerCase().trim();
+        if (!q) {
+            renderCatalogTable(rawCatalogBrands);
+            return;
+        }
+        const filtered = rawCatalogBrands.filter(b => {
+            if (b.name && b.name.toLowerCase().includes(q)) return true;
+            if (b.models && b.models.some(m => m.name && m.name.toLowerCase().includes(q))) return true;
+            return false;
+        });
+        renderCatalogTable(filtered);
+    }
+
+    async function adminAddBrand() {
+        const input = document.getElementById('adminNewBrandName');
+        const name = (input.value || '').trim();
+        if (!name) {
+            showToast('Please enter a brand name', true);
+            input.focus();
+            return;
+        }
+
+        try {
+            const res = await fetch('api/data/brand', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ name: name })
+            });
+            const data = await res.json();
+            if (data.status) {
+                showToast(data.message || 'Brand added successfully');
+                input.value = '';
+                await loadCatalogData(true);
+            } else {
+                showToast(data.message || 'Failed to add brand', true);
+            }
+        } catch (e) {
+            showToast('Error adding brand: ' + e.message, true);
+        }
+    }
+
+    async function adminAddModel() {
+        const select = document.getElementById('adminModelBrandSelect');
+        const input = document.getElementById('adminNewModelName');
+        const brandId = parseInt(select.value, 10);
+        const name = (input.value || '').trim();
+
+        if (!brandId || brandId <= 0) {
+            showToast('Please select a parent brand first', true);
+            select.focus();
+            return;
+        }
+        if (!name) {
+            showToast('Please enter a model name', true);
+            input.focus();
+            return;
+        }
+
+        try {
+            const res = await fetch('api/data/model', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ brandId: brandId, name: name })
+            });
+            const data = await res.json();
+            if (data.status) {
+                showToast(data.message || 'Model added successfully');
+                input.value = '';
+                await loadCatalogData(true);
+            } else {
+                showToast(data.message || 'Failed to add model', true);
+            }
+        } catch (e) {
+            showToast('Error adding model: ' + e.message, true);
+        }
+    }
+
+    async function adminDeleteBrand(id, name) {
+        if (!confirm(`Are you sure you want to delete brand "${name}"? This will also remove any unused models under it.`)) {
+            return;
+        }
+        try {
+            const res = await fetch(`${API}/brands/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+            const data = await res.json();
+            if (data.status) {
+                showToast(data.message || 'Brand deleted successfully');
+                await loadCatalogData(true);
+            } else {
+                showToast(data.message || 'Failed to delete brand', true);
+            }
+        } catch (e) {
+            showToast('Error deleting brand: ' + e.message, true);
+        }
+    }
+
+    async function adminDeleteModel(id, name) {
+        if (!confirm(`Are you sure you want to delete model "${name}"?`)) {
+            return;
+        }
+        try {
+            const res = await fetch(`${API}/models/${id}`, {
+                method: 'DELETE',
+                credentials: 'same-origin'
+            });
+            const data = await res.json();
+            if (data.status) {
+                showToast(data.message || 'Model deleted successfully');
+                await loadCatalogData(true);
+            } else {
+                showToast(data.message || 'Failed to delete model', true);
+            }
+        } catch (e) {
+            showToast('Error deleting model: ' + e.message, true);
+        }
+    }
+
+    /* ════════════════════ DASHBOARD ════════════════════ */
+    let dashRevenueChartInst = null;
+    let dashSplitChartInst = null;
+
+    function loadDashboardStats() {
+        fetch(`${API}/stats`, { credentials: 'same-origin' })
+            .then(res => {
+                if (res.status === 401) { window.location.href = 'admin-login.html'; return null; }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+
+                // Numbers
+                const rev = Number(data.totalRevenue || 0);
+                document.getElementById('stat-revenue').textContent = 'Rs. ' + rev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('stat-orders').textContent  = data.ordersCount ?? 0;
+                document.getElementById('stat-users').textContent   = data.usersCount ?? 0;
+                document.getElementById('stat-sellers').textContent = data.sellersCount ?? 0;
+
+                // Finance section stats
+                const exp = Number(data.totalExpenses || (rev * 0.35));
+                const prof = Number(data.totalProfit || (rev - exp));
+                document.getElementById('fin-revenue').textContent  = 'Rs. ' + rev.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('fin-expenses').textContent = 'Rs. ' + exp.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('fin-profit').textContent   = 'Rs. ' + prof.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                // Badges in sidebar
+                document.getElementById('badge-orders').textContent    = data.ordersCount ?? 0;
+                const bRc = document.getElementById('badge-receipts');
+                if (bRc) bRc.textContent = data.ordersCount ?? 0;
+                document.getElementById('badge-products').textContent  = data.productsCount ?? 0;
+                document.getElementById('badge-customers').textContent = data.usersCount ?? 0;
+                document.getElementById('badge-sellers').textContent   = data.sellersCount ?? 0;
+                const bRev = document.getElementById('badge-revenue');
+                if (bRev) bRev.textContent = 'Rs. ' + Math.round(rev).toLocaleString();
+
+                if (data.pendingSellersCount > 0) {
+                    const sb = document.getElementById('badge-sellers');
+                    sb.textContent = `${data.sellersCount} (${data.pendingSellersCount}!)`;
+                    sb.classList.add('alert-pill');
+                    document.getElementById('stat-pending-sub').innerHTML = `<i class="fa-regular fa-bell text-warning"></i> ${data.pendingSellersCount} pending approval`;
+                }
+
+                // Recent Orders table
+                const ordTbody = document.getElementById('dash-orders-tbody');
+                if (data.recentOrders && data.recentOrders.length > 0) {
+                    ordTbody.innerHTML = data.recentOrders.map(o => `
+                        <tr>
+                            <td><strong class="mono text-brand">#${o.id}</strong></td>
+                            <td>${escapeHtml(o.customer)}</td>
+                            <td><strong>Rs. ${Number(o.total || 0).toLocaleString()}</strong></td>
+                            <td>${renderStatusBadge(o.status)}</td>
+                            <td class="text-sub">${o.createdAt}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    ordTbody.innerHTML = `<tr><td colspan="5" class="empty-state">No orders yet.</td></tr>`;
+                }
+
+                // Recent Customers table
+                const custTbody = document.getElementById('dash-cust-tbody');
+                if (data.recentCustomers && data.recentCustomers.length > 0) {
+                    custTbody.innerHTML = data.recentCustomers.map(c => `
+                        <tr>
+                            <td class="mono text-muted">#${c.id}</td>
+                            <td><strong>${escapeHtml(c.name)}</strong></td>
+                            <td class="text-muted">${escapeHtml(c.email)}</td>
+                            <td>${renderStatusBadge(c.status)}</td>
+                            <td class="text-sub">${c.createdAt}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    custTbody.innerHTML = `<tr><td colspan="5" class="empty-state">No customers registered yet.</td></tr>`;
+                }
+
+                buildDashboardCharts(data);
+            })
+            .catch(err => {
+                console.error("Dashboard stats error:", err);
+            });
+    }
+
+    function buildDashboardCharts(data) {
+        // Working Revenue Bar Chart (Only active months where revenue > 0)
+        const barCtx = document.getElementById('dashRevenueChart');
+        if (barCtx) {
+            if (dashRevenueChartInst) dashRevenueChartInst.destroy();
+            const monthlyData = (data && data.monthlyRevenue && data.monthlyRevenue.length > 0)
+                ? data.monthlyRevenue
+                : [];
+
+            const labels = monthlyData.length > 0 ? monthlyData.map(m => m.month) : ['Current Month'];
+            const revData = monthlyData.length > 0 ? monthlyData.map(m => Number(m.revenue || 0)) : [0];
+
+            dashRevenueChartInst = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Revenue (Rs.)',
+                            data: revData,
+                            backgroundColor: 'rgba(27,219,123,0.85)',
+                            borderColor: '#1bdb7b',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            maxBarThickness: 56
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, boxHeight: 12, color: '#94a3b8' } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ' Revenue: Rs. ' + Number(ctx.raw || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#1f2c35' },
+                            ticks: {
+                                color: '#8b9ca6',
+                                callback: v => (v >= 1000 ? (v / 1000).toLocaleString() + 'k' : v)
+                            }
+                        },
+                        x: { grid: { display: false }, ticks: { color: '#8b9ca6' } }
+                    }
+                }
+            });
+        }
+
+        // Split Doughnut
+        const splitCtx = document.getElementById('dashSplitChart');
+        if (splitCtx) {
+            if (dashSplitChartInst) dashSplitChartInst.destroy();
+            dashSplitChartInst = new Chart(splitCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Customers', 'Sellers'],
+                    datasets: [{
+                        data: [data.usersCount || 5, data.sellersCount || 1],
+                        backgroundColor: ['#18a953', '#38bdf8'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 16 } }
+                    }
+                }
+            });
+        }
+    }
+
+    /* ════════════════════ ORDERS ════════════════════ */
+    function loadOrders(force = false) {
+        if (rawOrders.length > 0 && !force) {
+            renderOrdersTable(rawOrders);
+            return;
+        }
+        fetch(`${API}/orders`, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                rawOrders = data || [];
+                document.getElementById('badge-orders').textContent = rawOrders.length;
+                renderOrdersTable(rawOrders);
+            })
+            .catch(() => {
+                document.getElementById('orders-tbody').innerHTML = `<tr><td colspan="8" class="empty-state text-danger"><i class="fa-regular fa-triangle-exclamation"></i> Failed to load orders.</td></tr>`;
+            });
+    }
+
+    function renderOrdersTable(list) {
+        const tbody = document.getElementById('orders-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><i class="fa-regular fa-bag-shopping"></i> No orders found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(o => `
+            <tr>
+                <td><strong class="mono text-brand">#${o.id}</strong></td>
+                <td>
+                    <div class="text-strong">${escapeHtml(o.customerName)}</div>
+                    <div class="text-sub-sm">${escapeHtml(o.customerEmail)}</div>
+                </td>
+                <td><span class="badge bg-dark border text-muted">${escapeHtml(o.deliveryType || 'Standard')}</span></td>
+                <td><span class="mono">${o.itemsCount || 1} items</span></td>
+                <td><strong class="text-white">Rs. ${Number(o.total || 0).toLocaleString()}</strong></td>
+                <td id="order-status-badge-${o.id}">${renderStatusBadge(o.status)}</td>
+                <td class="text-sub">${o.createdAt}</td>
+                <td>
+                    <div class="d-flex gap-1 align-items-center">
+                        <select class="table-select select-table-sm" onchange="updateOrderStatus(${o.id}, this.value)">
+                            <option value="COMPLETED" ${o.status==='COMPLETED'?'selected':''}>Completed</option>
+                            <option value="PACKING" ${o.status==='PACKING'?'selected':''}>Packing</option>
+                            <option value="DELIVERED" ${o.status==='DELIVERED'?'selected':''}>Delivered</option>
+                            <option value="PENDING" ${o.status==='PENDING'?'selected':''}>Pending</option>
+                            <option value="CANCELED" ${o.status==='CANCELED'?'selected':''}>Canceled</option>
+                        </select>
+                        <button type="button" class="btn-action-sm btn-outline" onclick="adminViewReceipt(${o.id})" title="View Receipt">
+                            <i class="fa-regular fa-receipt"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterOrders() {
+        const query = document.getElementById('orderSearch').value.toLowerCase().trim();
+        const status = document.getElementById('orderStatusFilter').value;
+        const filtered = rawOrders.filter(o => {
+            const matchQ = !query || String(o.id).includes(query) || (o.customerName && o.customerName.toLowerCase().includes(query)) || (o.customerEmail && o.customerEmail.toLowerCase().includes(query));
+            const matchS = !status || (o.status && o.status.toUpperCase() === status.toUpperCase());
+            return matchQ && matchS;
+        });
+        renderOrdersTable(filtered);
+    }
+
+    function updateOrderStatus(id, newStatus) {
+        fetch(`${API}/orders/${id}/status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const target = rawOrders.find(o => o.id === id);
+                if (target) target.status = newStatus;
+                const badgeEl = document.getElementById(`order-status-badge-${id}`);
+                if (badgeEl) badgeEl.innerHTML = renderStatusBadge(newStatus);
+                showToast(`Order #${id} updated to ${newStatus}`);
+            } else {
+                showToast('Failed to update order status', true);
+            }
+        })
+        .catch(() => showToast('Error updating order status', true));
+    }
+
+    /* ════════════════════ CUSTOMER PURCHASES & RECEIPTS ════════════════════ */
+    let rawReceipts = [];
+
+    function loadCustomerReceipts(force = false) {
+        if (rawReceipts.length > 0 && !force) {
+            renderCustomerReceiptsTable(rawReceipts);
+            return;
+        }
+        fetch(`${API}/orders`, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                rawReceipts = data || [];
+                const bRc = document.getElementById('badge-receipts');
+                if (bRc) bRc.textContent = rawReceipts.length;
+                renderCustomerReceiptsTable(rawReceipts);
+            })
+            .catch(() => {
+                document.getElementById('receipts-tbody').innerHTML = `<tr><td colspan="8" class="empty-state text-danger"><i class="fa-regular fa-triangle-exclamation"></i> Failed to load customer receipts.</td></tr>`;
+            });
+    }
+
+    function renderCustomerReceiptsTable(list) {
+        const tbody = document.getElementById('receipts-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><i class="fa-regular fa-file-invoice"></i> No customer purchases recorded yet.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(o => {
+            const items = o.items || [];
+            let itemsHtml = '';
+            if (items.length > 0) {
+                itemsHtml = `
+                    <div class="d-flex flex-column gap-1">
+                        ${items.map(it => {
+                            const spec = [it.storage, it.color].filter(Boolean).join(' · ');
+                            const img = it.image || 'assets/images/placeholder.png';
+                            return `
+                                <div class="d-flex align-items-center gap-2" style="font-size:0.83rem">
+                                    <img src="${escapeHtml(img)}" class="cell-thumb" style="width:30px;height:30px;border-radius:6px" onerror="this.src='assets/images/placeholder.png'">
+                                    <div>
+                                        <span class="text-white fw-semibold">${escapeHtml(it.title || 'Product')}</span>
+                                        <span class="badge bg-dark border text-muted ms-1" style="font-size:0.68rem">&times;${it.qty}</span>
+                                        ${spec ? `<small class="text-muted d-block" style="font-size:0.75rem">${escapeHtml(spec)}</small>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                itemsHtml = `<span class="mono text-muted">${o.itemsCount || 1} item(s)</span>`;
+            }
+
+            const initial = o.customerName ? o.customerName.charAt(0).toUpperCase() : 'C';
+            const orderNumber = '#ST-ORD-' + String(o.id).padStart(5, '0');
+
+            return `
+                <tr id="receipt-row-${o.id}">
+                    <td>
+                        <strong class="mono text-brand">${orderNumber}</strong>
+                        <div class="text-sub-sm text-muted">ID: #${o.id}</div>
+                    </td>
+                    <td>
+                        <div class="cell-title-wrap">
+                            <div class="cell-avatar">${initial}</div>
+                            <div>
+                                <div class="text-strong">${escapeHtml(o.customerName)}</div>
+                                <div class="text-sub-sm">${escapeHtml(o.customerEmail)}</div>
+                                ${o.customerMobile && o.customerMobile !== '—' ? `<div class="text-sub-sm text-muted"><i class="fa-regular fa-phone" style="font-size:0.7rem"></i> ${escapeHtml(o.customerMobile)}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${itemsHtml}</td>
+                    <td>
+                        <div class="fw-semibold text-white" style="font-size:0.82rem">${escapeHtml(o.deliveryType || 'Standard')}</div>
+                        <div class="text-sub-sm text-muted" style="max-width:200px">${escapeHtml(o.shippingAddress || '—')}</div>
+                    </td>
+                    <td>
+                        <strong class="text-white" style="font-size:0.95rem">Rs. ${Number(o.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+                        <div class="text-sub-sm text-muted">Sub: Rs. ${Number(o.subtotal || 0).toLocaleString()}</div>
+                    </td>
+                    <td>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:0.72rem">
+                            <i class="fa-brands fa-stripe me-1"></i>Stripe Paid
+                        </span>
+                        ${o.stripePaymentId && o.stripePaymentId !== '—' ? `<div class="mono text-muted" style="font-size:0.68rem;max-width:110px;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(o.stripePaymentId)}">${escapeHtml(o.stripePaymentId)}</div>` : ''}
+                    </td>
+                    <td class="text-sub">${o.createdAt}</td>
+                    <td style="text-align:right">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <button type="button" class="btn-action-sm btn-outline" onclick="adminViewReceipt(${o.id})" title="View Customer Receipt">
+                                <i class="fa-regular fa-eye"></i> View
+                            </button>
+                            <button type="button" class="btn-action-sm btn-approve" onclick="adminDownloadReceipt(${o.id})" title="Download or Print Receipt PDF">
+                                <i class="fa-regular fa-download"></i> Print
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterCustomerReceipts() {
+        const query = (document.getElementById('receiptSearch')?.value || '').toLowerCase().trim();
+        const status = (document.getElementById('receiptStatusFilter')?.value || '').toUpperCase();
+
+        const filtered = rawReceipts.filter(o => {
+            const matchesQuery = !query ||
+                String(o.id).includes(query) ||
+                (o.customerName && o.customerName.toLowerCase().includes(query)) ||
+                (o.customerEmail && o.customerEmail.toLowerCase().includes(query)) ||
+                (o.customerMobile && o.customerMobile.toLowerCase().includes(query)) ||
+                (o.stripePaymentId && o.stripePaymentId.toLowerCase().includes(query)) ||
+                (o.items && o.items.some(it => it.title && it.title.toLowerCase().includes(query)));
+
+            const matchesStatus = !status || (o.status && o.status.toUpperCase() === status);
+            return matchesQuery && matchesStatus;
+        });
+
+        renderCustomerReceiptsTable(filtered);
+    }
+
+    async function adminViewReceipt(orderId) {
+        try {
+            const res = await fetch(`${API}/orders/${orderId}/receipt`, { credentials: 'same-origin' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                if (window.STReceipt) {
+                    window.STReceipt.show(data);
+                } else {
+                    alert('Receipt: Order #' + data.orderNumber + ' | Customer: ' + data.customerName + ' | Total: Rs. ' + data.total);
+                }
+            } else {
+                showToast(data.message || 'Failed to load receipt', true);
+            }
+        } catch (e) {
+            showToast('Error loading receipt: ' + e.message, true);
+        }
+    }
+
+    async function adminDownloadReceipt(orderId) {
+        try {
+            const res = await fetch(`${API}/orders/${orderId}/receipt`, { credentials: 'same-origin' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                if (window.STReceipt) {
+                    window.STReceipt.show(data);
+                    setTimeout(() => window.STReceipt.print(), 350);
+                }
+            } else {
+                showToast(data.message || 'Failed to print receipt', true);
+            }
+        } catch (e) {
+            showToast('Error printing receipt: ' + e.message, true);
+        }
+    }
+
+    /* ════════════════════ PRODUCTS ════════════════════ */
+    function loadProducts(force = false) {
+        if (rawProducts.length > 0 && !force) {
+            renderProductsTable(rawProducts);
+            return;
+        }
+        fetch(`${API}/products`, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                rawProducts = data || [];
+                document.getElementById('badge-products').textContent = rawProducts.length;
+                renderProductsTable(rawProducts);
+            })
+            .catch(() => {
+                document.getElementById('products-tbody').innerHTML = `<tr><td colspan="8" class="empty-state text-danger"><i class="fa-regular fa-triangle-exclamation"></i> Failed to load products.</td></tr>`;
+            });
+    }
+
+    function renderProductsTable(list) {
+        const tbody = document.getElementById('products-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><i class="fa-regular fa-box-open"></i> No products found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(p => {
+            const imgHtml = p.image
+                ? `<img src="${escapeHtml(p.image)}" class="cell-thumb" onerror="this.src='assets/images/placeholder.png'">`
+                : `<div class="cell-thumb-icon"><i class="fa-regular fa-mobile-screen"></i></div>`;
+            const isRejected = (p.status || '').toUpperCase() === 'REJECTED';
+            const actionBtn = isRejected
+                ? `<button type="button" class="btn-action-sm btn-approve" onclick="toggleProductStatus(${p.id}, 'APPROVED')" title="Approve listing"><i class="fa-regular fa-check"></i> Approve</button>`
+                : `<button type="button" class="btn-action-sm btn-reject" onclick="toggleProductStatus(${p.id}, 'REJECTED')" title="Reject listing"><i class="fa-regular fa-ban"></i> Reject</button>`;
+
+            return `
+                <tr id="product-row-${p.id}">
+                    <td class="mono text-muted">#${p.id}</td>
+                    <td>
+                        <div class="cell-title-wrap">
+                            ${imgHtml}
+                            <div class="cell-title-text">${escapeHtml(p.title)}</div>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-dark border text-muted">${escapeHtml(p.brand)} &bull; ${escapeHtml(p.model)}</span></td>
+                    <td><strong class="text-brand">Rs. ${Number(p.price || 0).toLocaleString()}</strong></td>
+                    <td>
+                        <span class="mono">
+                            ${p.qty} in stock ${p.qty < 5 ? '<span class="badge bg-danger ms-1">Low</span>' : ''}
+                        </span>
+                    </td>
+                    <td class="text-muted">${escapeHtml(p.seller)}</td>
+                    <td id="product-status-${p.id}">${renderStatusBadge(p.status)}</td>
+                    <td class="text-sub">${p.createdAt}</td>
+                    <td>
+                        <div class="d-flex gap-1 align-items-center" id="product-action-${p.id}">
+                            ${actionBtn}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterProducts() {
+        const query = (document.getElementById('productSearch').value || '').toLowerCase().trim();
+        const statusFilter = (document.getElementById('productStatusFilter')?.value || 'ALL').toUpperCase();
+        const filtered = rawProducts.filter(p => {
+            const matchesQuery = !query || 
+                (p.title && p.title.toLowerCase().includes(query)) || 
+                (p.brand && p.brand.toLowerCase().includes(query)) || 
+                (p.model && p.model.toLowerCase().includes(query)) || 
+                String(p.id).includes(query);
+            let matchesStatus = true;
+            if (statusFilter !== 'ALL') {
+                const s = (p.status || 'APPROVED').toUpperCase();
+                matchesStatus = (s === statusFilter);
+            }
+            return matchesQuery && matchesStatus;
+        });
+        renderProductsTable(filtered);
+    }
+
+    async function toggleProductStatus(productId, targetStatus) {
+        try {
+            const endpoint = targetStatus ? `${API}/products/${productId}/status` : `${API}/products/${productId}/toggle-status`;
+            const options = {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: targetStatus })
+            };
+            const res = await fetch(endpoint, options);
+            const data = await res.json();
+            if (data.status === 'success' || data.status === true) {
+                const newStatus = data.newStatus || targetStatus || 'APPROVED';
+                const p = rawProducts.find(item => item.id === productId);
+                if (p) p.status = newStatus;
+                
+                // Update row in DOM
+                const statusCell = document.getElementById(`product-status-${productId}`);
+                if (statusCell) statusCell.innerHTML = renderStatusBadge(newStatus);
+                const actionCell = document.getElementById(`product-action-${productId}`);
+                if (actionCell) {
+                    const isNowRejected = newStatus.toUpperCase() === 'REJECTED';
+                    actionCell.innerHTML = isNowRejected
+                        ? `<button type="button" class="btn-action-sm btn-approve" onclick="toggleProductStatus(${productId}, 'APPROVED')" title="Approve listing"><i class="fa-regular fa-check"></i> Approve</button>`
+                        : `<button type="button" class="btn-action-sm btn-reject" onclick="toggleProductStatus(${productId}, 'REJECTED')" title="Reject listing"><i class="fa-regular fa-ban"></i> Reject</button>`;
+                }
+                showToast(`Product #${productId} status set to ${newStatus}`);
+            } else {
+                showToast(data.message || 'Failed to update product status', true);
+            }
+        } catch (e) {
+            showToast('Error updating status: ' + e.message, true);
+        }
+    }
+
+    /* ════════════════════ CUSTOMERS ════════════════════ */
+    function loadCustomers(force = false) {
+        if (rawCustomers.length > 0 && !force) {
+            renderCustomersTable(rawCustomers);
+            return;
+        }
+        fetch(`${API}/customers`, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                rawCustomers = data || [];
+                document.getElementById('badge-customers').textContent = rawCustomers.length;
+                renderCustomersTable(rawCustomers);
+            })
+            .catch(() => {
+                document.getElementById('customers-tbody').innerHTML = `<tr><td colspan="6" class="empty-state text-danger"><i class="fa-regular fa-triangle-exclamation"></i> Failed to load customers.</td></tr>`;
+            });
+    }
+
+    function renderCustomersTable(list) {
+        const tbody = document.getElementById('customers-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No customers found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(c => `
+            <tr>
+                <td class="mono text-muted">#${c.id}</td>
+                <td>
+                    <div class="cell-title-wrap">
+                        <div class="cell-avatar">
+                            ${c.firstName ? c.firstName.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                        <span class="text-strong">${escapeHtml(c.firstName + ' ' + c.lastName)}</span>
+                    </div>
+                </td>
+                <td class="text-muted">${escapeHtml(c.email)}</td>
+                <td id="cust-status-${c.id}">${renderStatusBadge(c.status)}</td>
+                <td class="text-sub">${c.createdAt}</td>
+                <td>
+                    <button type="button" class="btn-action-sm ${c.status === 'BLOCKED' ? 'btn-approve' : 'btn-reject'}" onclick="toggleCustomer(${c.id})">
+                        <i class="fa-regular ${c.status === 'BLOCKED' ? 'fa-check' : 'fa-ban'}"></i>
+                        ${c.status === 'BLOCKED' ? 'Unblock' : 'Block User'}
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterCustomers() {
+        const query = document.getElementById('custSearch').value.toLowerCase().trim();
+        const filtered = rawCustomers.filter(c => {
+            const fullName = (c.firstName + ' ' + c.lastName).toLowerCase();
+            return !query || fullName.includes(query) || (c.email && c.email.toLowerCase().includes(query));
+        });
+        renderCustomersTable(filtered);
+    }
+
+    function toggleCustomer(id) {
+        fetch(`${API}/customers/${id}/toggle-status`, { method: 'POST', credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const target = rawCustomers.find(c => c.id === id);
+                    if (target) target.status = data.newStatus;
+                    renderCustomersTable(rawCustomers);
+                    showToast(`Customer #${id} status changed to ${data.newStatus}`);
+                } else {
+                    showToast('Failed to update status', true);
+                }
+            })
+            .catch(() => showToast('Network error updating customer', true));
+    }
+
+    /* ════════════════════ SELLERS ════════════════════ */
+    function loadSellers(force = false) {
+        if (rawSellers.length > 0 && !force) {
+            renderSellersTable(rawSellers);
+            return;
+        }
+        fetch(`${API}/sellers`, { credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                rawSellers = data || [];
+                document.getElementById('badge-sellers').textContent = rawSellers.length;
+                renderSellersTable(rawSellers);
+            })
+            .catch(() => {
+                document.getElementById('sellers-tbody').innerHTML = `<tr><td colspan="8" class="empty-state text-danger"><i class="fa-regular fa-triangle-exclamation"></i> Failed to load sellers.</td></tr>`;
+            });
+    }
+
+    function renderSellersTable(list) {
+        const tbody = document.getElementById('sellers-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-state">No sellers found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(s => {
+            const isPending = s.status === 'PENDING';
+            return `
+                <tr>
+                    <td class="mono text-muted">#${s.id}</td>
+                    <td><strong class="text-strong">${escapeHtml(s.companyName)}</strong></td>
+                    <td class="text-muted">${escapeHtml(s.ownerName || '—')}</td>
+                    <td class="mono">${escapeHtml(s.contactNumber || '—')}</td>
+                    <td class="text-muted">${escapeHtml(s.email || '—')}</td>
+                    <td><span class="mono">${s.productsCount || 0} listings</span></td>
+                    <td id="seller-status-${s.id}">${renderStatusBadge(s.status)}</td>
+                    <td id="seller-action-${s.id}">
+                        ${isPending ? `
+                            <div class="cell-actions-row">
+                                <button type="button" class="btn-action-sm btn-approve" onclick="approveSeller(${s.id})">
+                                    <i class="fa-regular fa-check"></i> Approve
+                                </button>
+                                <button type="button" class="btn-action-sm btn-reject" onclick="rejectSeller(${s.id})">
+                                    <i class="fa-regular fa-xmark"></i> Reject
+                                </button>
+                            </div>
+                        ` : `
+                            <span class="text-sub">— Approved</span>
+                        `}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterSellers() {
+        const query = document.getElementById('sellerSearch').value.toLowerCase().trim();
+        const filtered = rawSellers.filter(s => {
+            return !query || (s.companyName && s.companyName.toLowerCase().includes(query)) || (s.email && s.email.toLowerCase().includes(query));
+        });
+        renderSellersTable(filtered);
+    }
+
+    function approveSeller(id) {
+        fetch(`${API}/sellers/${id}/approve`, { method: 'POST', credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const target = rawSellers.find(s => s.id === id);
+                    if (target) target.status = 'APPROVED';
+                    renderSellersTable(rawSellers);
+                    showToast(`Seller #${id} approved successfully`);
+                } else {
+                    showToast('Failed to approve seller', true);
+                }
+            })
+            .catch(() => showToast('Error approving seller', true));
+    }
+
+    function rejectSeller(id) {
+        fetch(`${API}/sellers/${id}/reject`, { method: 'POST', credentials: 'same-origin' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const target = rawSellers.find(s => s.id === id);
+                    if (target) target.status = 'REJECTED';
+                    renderSellersTable(rawSellers);
+                    showToast(`Seller #${id} application rejected`);
+                } else {
+                    showToast('Failed to reject seller', true);
+                }
+            })
+            .catch(() => showToast('Error rejecting seller', true));
+    }
+
+    /* ════════════════════ REVENUE REPORT ════════════════════ */
+    let rawRevenueData = null;
+    let revMonthlyChartInst = null;
+    let revSplitChartInst = null;
+
+    function loadRevenueReport(force = false) {
+        if (rawRevenueData && !force) {
+            renderRevenueSection(rawRevenueData);
+            return;
+        }
+        fetch(`${API}/revenue`, { credentials: 'same-origin' })
+            .then(res => {
+                if (res.status === 401) { window.location.href = 'admin-login.html'; return null; }
+                return res.json();
+            })
+            .then(data => {
+                if (!data) return;
+                rawRevenueData = data;
+                renderRevenueSection(data);
+            })
+            .catch(err => {
+                console.error("Revenue report error:", err);
+                showToast('Failed to load revenue data', true);
+            });
+    }
+
+    function renderRevenueSection(data) {
+        const totalRev = Number(data.totalRevenue || 0);
+        document.getElementById('rev-total-revenue').textContent = 'Rs. ' + totalRev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('rev-total-orders').textContent  = data.totalOrders ?? 0;
+        document.getElementById('rev-avg-order').textContent     = 'Rs. ' + Number(data.avgOrderValue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const revBadge = document.getElementById('badge-revenue');
+        if (revBadge) {
+            revBadge.textContent = 'Rs. ' + Math.round(totalRev).toLocaleString();
+        }
+
+        const topProductEl = document.getElementById('rev-top-product');
+        const topProductSubEl = document.getElementById('rev-top-product-sub');
+        if (data.byProduct && data.byProduct.length > 0) {
+            const topP = data.byProduct[0];
+            topProductEl.textContent = topP.title;
+            topProductSubEl.innerHTML = `<i class="fa-regular fa-trophy text-brand"></i> Rs. ${Number(topP.revenue || 0).toLocaleString()} (${topP.unitsSold} units)`;
+        } else {
+            topProductEl.textContent = '—';
+            topProductSubEl.innerHTML = `<i class="fa-regular fa-trophy"></i> No sales recorded`;
+        }
+
+        renderRevProductsTable(data.byProduct || [], totalRev);
+        renderRevSellersTable(data.bySeller || [], totalRev);
+        renderRevCustomersTable(data.byCustomer || [], totalRev);
+        buildRevenueCharts(data);
+    }
+
+    function renderRevProductsTable(list, totalRev) {
+        const tbody = document.getElementById('rev-products-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No product revenue recorded yet.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = list.map(p => {
+            const rev = Number(p.revenue || 0);
+            const share = totalRev > 0 ? ((rev / totalRev) * 100).toFixed(1) : '0.0';
+            return `
+                <tr>
+                    <td><strong class="mono text-brand">#${p.id}</strong></td>
+                    <td><span class="cell-title-text">${escapeHtml(p.title)}</span></td>
+                    <td class="text-sub">${escapeHtml(p.seller || 'SmartTrade')}</td>
+                    <td><span class="mono">${p.unitsSold} sold</span></td>
+                    <td><strong class="text-brand">Rs. ${rev.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></td>
+                    <td>
+                        <span class="share-pill">${share}%</span>
+                        <progress value="${share}" max="100" class="st-progress"></progress>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderRevSellersTable(list, totalRev) {
+        const tbody = document.getElementById('rev-sellers-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No seller revenue recorded yet.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = list.map(s => {
+            const rev = Number(s.revenue || 0);
+            const share = totalRev > 0 ? ((rev / totalRev) * 100).toFixed(1) : '0.0';
+            return `
+                <tr>
+                    <td><strong class="mono text-muted">#${s.id}</strong></td>
+                    <td><strong class="text-white">${escapeHtml(s.companyName)}</strong></td>
+                    <td><span class="mono">${s.ordersCount || 0} orders</span></td>
+                    <td><span class="mono">${s.unitsSold || 0} units</span></td>
+                    <td><strong class="text-brand">Rs. ${rev.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></td>
+                    <td>
+                        <span class="share-pill">${share}%</span>
+                        <progress value="${share}" max="100" class="st-progress"></progress>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function renderRevCustomersTable(list, totalRev) {
+        const tbody = document.getElementById('rev-customers-tbody');
+        if (!list || list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state">No customer purchases recorded yet.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = list.map(c => {
+            const rev = Number(c.revenue || 0);
+            const share = totalRev > 0 ? ((rev / totalRev) * 100).toFixed(1) : '0.0';
+            return `
+                <tr>
+                    <td><strong class="mono text-muted">#${c.id}</strong></td>
+                    <td>
+                        <div class="cell-title-wrap">
+                            <div class="cell-avatar">
+                                ${c.name ? c.name.charAt(0).toUpperCase() : 'C'}
+                            </div>
+                            <strong class="text-white">${escapeHtml(c.name)}</strong>
+                        </div>
+                    </td>
+                    <td class="text-sub">${escapeHtml(c.email)}</td>
+                    <td><span class="mono">${c.ordersCount || 0} orders</span></td>
+                    <td><strong class="text-brand">Rs. ${rev.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong></td>
+                    <td>
+                        <span class="share-pill">${share}%</span>
+                        <progress value="${share}" max="100" class="st-progress"></progress>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function filterRevProducts() {
+        if (!rawRevenueData || !rawRevenueData.byProduct) return;
+        const q = (document.getElementById('revProductSearch').value || '').toLowerCase().trim();
+        const filtered = rawRevenueData.byProduct.filter(p => {
+            return !q || (p.title && p.title.toLowerCase().includes(q)) || (p.seller && p.seller.toLowerCase().includes(q)) || String(p.id).includes(q);
+        });
+        renderRevProductsTable(filtered, Number(rawRevenueData.totalRevenue || 0));
+    }
+
+    function filterRevSellers() {
+        if (!rawRevenueData || !rawRevenueData.bySeller) return;
+        const q = (document.getElementById('revSellerSearch').value || '').toLowerCase().trim();
+        const filtered = rawRevenueData.bySeller.filter(s => {
+            return !q || (s.companyName && s.companyName.toLowerCase().includes(q)) || String(s.id).includes(q);
+        });
+        renderRevSellersTable(filtered, Number(rawRevenueData.totalRevenue || 0));
+    }
+
+    function filterRevCustomers() {
+        if (!rawRevenueData || !rawRevenueData.byCustomer) return;
+        const q = (document.getElementById('revCustomerSearch').value || '').toLowerCase().trim();
+        const filtered = rawRevenueData.byCustomer.filter(c => {
+            return !q || (c.name && c.name.toLowerCase().includes(q)) || (c.email && c.email.toLowerCase().includes(q)) || String(c.id).includes(q);
+        });
+        renderRevCustomersTable(filtered, Number(rawRevenueData.totalRevenue || 0));
+    }
+
+    function buildRevenueCharts(data) {
+        // 1. Monthly Working Revenue Bar Chart (Only active months where revenue > 0)
+        const barCtx = document.getElementById('revMonthlyChart');
+        if (barCtx) {
+            if (revMonthlyChartInst) revMonthlyChartInst.destroy();
+            const monthlyData = (data && data.monthlyRevenue && data.monthlyRevenue.length > 0)
+                ? data.monthlyRevenue
+                : [];
+            const labels = monthlyData.length > 0 ? monthlyData.map(m => m.month) : ['No Orders'];
+            const revData = monthlyData.length > 0 ? monthlyData.map(m => Number(m.revenue || 0)) : [0];
+
+            revMonthlyChartInst = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Working Revenue (Rs.)',
+                        data: revData,
+                        backgroundColor: 'rgba(27,219,123,0.85)',
+                        borderColor: '#1bdb7b',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        maxBarThickness: 60
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, boxHeight: 12, color: '#94a3b8' } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ' Revenue: Rs. ' + Number(ctx.raw || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#1f2c35' },
+                            ticks: {
+                                color: '#8b9ca6',
+                                callback: v => (v >= 1000 ? (v / 1000).toLocaleString() + 'k' : v)
+                            }
+                        },
+                        x: { grid: { display: false }, ticks: { color: '#8b9ca6' } }
+                    }
+                }
+            });
+        }
+
+        // 2. Revenue by Product Split Doughnut
+        const splitCtx = document.getElementById('revSplitChart');
+        if (splitCtx) {
+            if (revSplitChartInst) revSplitChartInst.destroy();
+            const prodList = (data && data.byProduct) ? data.byProduct : [];
+            let splitLabels = [];
+            let splitData = [];
+            if (prodList.length === 0) {
+                splitLabels = ['No Products Sold'];
+                splitData = [1];
+            } else {
+                const top5 = prodList.slice(0, 5);
+                splitLabels = top5.map(p => p.title.length > 22 ? p.title.substring(0, 20) + '...' : p.title);
+                splitData = top5.map(p => Number(p.revenue || 0));
+                if (prodList.length > 5) {
+                    const othersTotal = prodList.slice(5).reduce((acc, cur) => acc + Number(cur.revenue || 0), 0);
+                    if (othersTotal > 0) {
+                        splitLabels.push('Other Products');
+                        splitData.push(othersTotal);
+                    }
+                }
+            }
+
+            revSplitChartInst = new Chart(splitCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: splitLabels,
+                    datasets: [{
+                        data: splitData,
+                        backgroundColor: ['#1bdb7b', '#38bdf8', '#a855f7', '#f59e0b', '#ec4899', '#64748b'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12 } },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ' Rs. ' + Number(ctx.raw || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /* ════════════════════ FINANCIALS ════════════════════ */
+    let finBarChartInst = null;
+    let finLineChartInst = null;
+
+    function buildFinanceCharts() {
+        const barCtx = document.getElementById('financeBarChart');
+        if (barCtx) {
+            if (finBarChartInst) finBarChartInst.destroy();
+            finBarChartInst = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: MONTHS,
+                    datasets: [
+                        { label: 'Revenue (Rs.)', data: REVENUE_SERIES, backgroundColor: 'rgba(27,219,123,0.8)', borderRadius: 6 },
+                        { label: 'Operating Cost (Rs.)', data: EXPENSE_SERIES, backgroundColor: 'rgba(239,68,68,0.7)', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#1f2c35' }, ticks: { color: '#8b9ca6', callback: v => (v/1000) + 'k' } },
+                        x: { grid: { display: false }, ticks: { color: '#8b9ca6' } }
+                    }
+                }
+            });
+        }
+
+        const lineCtx = document.getElementById('financeLineChart');
+        if (lineCtx) {
+            if (finLineChartInst) finLineChartInst.destroy();
+            const netSeries = REVENUE_SERIES.map((r, i) => r - EXPENSE_SERIES[i]);
+            finLineChartInst = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: MONTHS,
+                    datasets: [{
+                        label: 'Net Profit (Rs.)',
+                        data: netSeries,
+                        borderColor: '#1bdb7b',
+                        backgroundColor: 'rgba(27, 219, 123, 0.1)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#1bdb7b',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#1f2c35' }, ticks: { color: '#8b9ca6', callback: v => (v/1000) + 'k' } },
+                        x: { grid: { display: false }, ticks: { color: '#8b9ca6' } }
+                    }
+                }
+            });
+        }
+    }
+
+    /* ════════════════════ HELPERS ════════════════════ */
+    function renderStatusBadge(status) {
+        if (!status) status = 'PENDING';
+        const s = status.toUpperCase();
+        let cls = 'pending';
+        let dot = '○';
+        if (s === 'VERIFIED' || s === 'ACTIVE' || s === 'APPROVED' || s === 'COMPLETED') {
+            cls = 'completed';
+            dot = '●';
+        } else if (s === 'DELIVERED') {
+            cls = 'delivered';
+            dot = '●';
+        } else if (s === 'BLOCKED' || s === 'REJECTED' || s === 'CANCELED') {
+            cls = 'canceled';
+            dot = '✕';
+        }
+        return `<span class="status-badge ${cls}">${dot} ${escapeHtml(status)}</span>`;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function logoutAdmin() {
+        fetch(`${API}/logout`, { method: 'POST', credentials: 'same-origin' })
+            .finally(() => {
+                window.location.href = 'admin-login.html';
+            });
+    }
+
+    // Startup
+    document.addEventListener('DOMContentLoaded', initAdmin);
+</script>
+</body>
+</html>

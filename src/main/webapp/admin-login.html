@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Login | SmartTrade</title>
+    <meta name="description" content="SmartTrade Admin Portal - Authorized access only.">
+    <meta name="theme-color" content="#10171c">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <style>
+        body {
+            background-color: var(--st-bg, #10171c);
+            color: var(--st-text, #e2e8f0);
+            min-height: 100vh;
+        }
+
+        .admin-login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .admin-login-wrap {
+            width: 100%;
+            max-width: 440px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .admin-login-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .admin-login-logo img {
+            height: 38px;
+            width: auto;
+        }
+
+        .admin-login-card {
+            background: var(--st-surface, #151e24);
+            border: 1px solid var(--st-line-2, #1f2c35);
+            border-radius: 16px;
+            padding: 2.25rem 2rem;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .admin-login-card .badge-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: var(--st-brand-soft, rgba(27, 219, 123, 0.12));
+            border: 1px solid var(--st-brand-line, rgba(27, 219, 123, 0.25));
+            color: var(--st-brand-3, #1bdb7b);
+            font: 600 0.7rem var(--st-mono, monospace);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            margin-bottom: 1.25rem;
+        }
+
+        .admin-login-card h2 {
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-login-card .sub {
+            color: var(--st-muted, #8b9ca6);
+            font-size: 0.88rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .admin-alert {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 1.25rem;
+            display: none;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .admin-alert.visible {
+            display: flex;
+        }
+
+        .form-group-field {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group-field label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.45rem;
+            color: var(--st-text-2, #94a3b8);
+        }
+
+        .input-icon-wrap {
+            position: relative;
+        }
+
+        .input-icon-wrap i.input-icon-left {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--st-faint, #64748b);
+            font-size: 0.95rem;
+            pointer-events: none;
+        }
+
+        .input-icon-wrap input {
+            background: var(--st-bg, #10171c);
+            border: 1px solid var(--st-line, #1f2c35);
+            border-radius: 10px;
+            color: var(--st-text, #fff);
+            padding: 0.75rem 2.8rem 0.75rem 2.6rem;
+            width: 100%;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .input-icon-wrap input:focus {
+            border-color: var(--st-brand-3, #1bdb7b);
+            box-shadow: 0 0 0 3px rgba(27, 219, 123, 0.15);
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: 0;
+            color: var(--st-faint, #64748b);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .toggle-password-btn:hover {
+            color: var(--st-text, #fff);
+        }
+
+        .btn-admin-submit {
+            background: var(--st-brand, #18a953);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 0.8rem;
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1.5rem;
+        }
+
+        .btn-admin-submit:hover:not(:disabled) {
+            background: #148b44;
+            transform: translateY(-1px);
+        }
+
+        .btn-admin-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .admin-login-footer {
+            text-align: center;
+            margin-top: 1.75rem;
+            font-size: 0.82rem;
+            color: var(--st-faint, #64748b);
+        }
+
+        .admin-login-footer a {
+            color: var(--st-brand-3, #1bdb7b);
+            text-decoration: none;
+        }
+
+        .admin-login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-login-footer i {
+            color: var(--st-brand-3, #1bdb7b);
+            margin-right: 0.3rem;
+        }
+
+        @media (max-width: 480px) {
+            .admin-login-page { padding: 1.5rem 1rem; }
+            .admin-login-card { padding: 1.75rem 1.25rem; }
+            .admin-login-card h2 { font-size: 1.35rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-login-page">
+    <div class="admin-login-wrap">
+
+        <div class="admin-login-logo">
+            <a href="index.html">
+                <img src="assets/images/logo/logo-light.png" alt="SmartTrade">
+            </a>
+        </div>
+
+        <div class="admin-login-card">
+            <span class="badge-admin">
+                <i class="fa-solid fa-lock-keyhole"></i> Secure Portal
+            </span>
+            <h2>Admin Sign In</h2>
+            <p class="sub">Authorized administrators and operators only.</p>
+
+            <div class="admin-alert" id="adminAlert" role="alert">
+                <i class="fa-regular fa-circle-exclamation"></i>
+                <span id="adminAlertMsg">Invalid credentials</span>
+            </div>
+
+            <form id="adminLoginForm" novalidate autocomplete="on">
+                <div class="form-group-field">
+                    <label for="adminEmail">Administrator Email</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-regular fa-envelope input-icon-left"></i>
+                        <input type="email" id="adminEmail" placeholder="admin@gmail.com" required autocomplete="username" autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group-field">
+                    <label for="adminPassword">Password</label>
+                    <div class="input-icon-wrap">
+                        <i class="fa-regular fa-lock input-icon-left"></i>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="toggle-password-btn" onclick="togglePass()" aria-label="Toggle password view">
+                            <i class="fa-regular fa-eye" id="passToggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-admin-submit" id="loginBtn">
+                    <i class="fa-regular fa-arrow-right-to-bracket"></i> Sign In to Admin Panel
+                </button>
+            </form>
+        </div>
+
+        <div class="admin-login-footer">
+            <i class="fa-regular fa-shield-check"></i>
+            SmartTrade Admin Infrastructure &bull; <a href="index.html">Back to Store</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="assets/js/vendor/popper.min.js"></script>
+<script src="assets/js/vendor/bootstrap.min.js"></script>
+<script>
+    const API = 'api/admin';
+
+    // If already logged in, redirect directly
+    fetch(`${API}/me`, { credentials: 'same-origin' })
+        .then(res => {
+            if (res.ok) window.location.href = 'admin.html';
+        })
+        .catch(() => {});
+
+    function togglePass() {
+        const input = document.getElementById('adminPassword');
+        const icon = document.getElementById('passToggleIcon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'fa-regular fa-eye-slash';
+        } else {
+            input.type = 'password';
+            icon.className = 'fa-regular fa-eye';
+        }
+    }
+
+    document.getElementById('adminLoginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = document.getElementById('adminEmail').value.trim();
+        const password = document.getElementById('adminPassword').value;
+        const btn = document.getElementById('loginBtn');
+        const alert = document.getElementById('adminAlert');
+
+        if (!email || !password) {
+            document.getElementById('adminAlertMsg').textContent = 'Please enter both email and password.';
+            alert.classList.add('visible');
+            return;
+        }
+
+        alert.classList.remove('visible');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-regular fa-spinner fa-spin"></i> Authenticating…';
+
+        fetch(`${API}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email, password })
+        })
+        .then(async res => {
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.status === 'success') {
+                window.location.href = 'admin.html';
+            } else {
+                document.getElementById('adminAlertMsg').textContent = data.message || 'Invalid admin credentials.';
+                alert.classList.add('visible');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-regular fa-arrow-right-to-bracket"></i> Sign In to Admin Panel';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('adminAlertMsg').textContent = 'Unable to connect to server. Please try again.';
+            alert.classList.add('visible');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-regular fa-arrow-right-to-bracket"></i> Sign In to Admin Panel';
+        });
+    });
+</script>
+</body>
+</html>

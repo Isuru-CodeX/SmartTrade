@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Page not found | SmartTrade</title>
+    <meta name="description" content="The page you requested could not be found.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+<main class="st-main">
+    <section class="err">
+        <div>
+            <div class="code" id="errCode">404</div>
+            <h2 id="errTitle">This page took a wrong turn.</h2>
+            <p class="page-sub mx-auto" id="errText">The page you are looking for does not exist, was moved, or you do not have access to it.</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap mt-4">
+                <a class="st-btn" href="index.html"><i class="fa-regular fa-house"></i> Back to home</a>
+                <a class="st-btn st-btn-ghost" href="search.html">Browse phones</a>
+            </div>
+        </div>
+    </section>
+</main>
+<footer-content class="st-footer"></footer-content>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+    /* The container serves this page for 403 / 404 / 500 - show a matching message when the code is known */
+    (function () {
+        var code = new URLSearchParams(location.search).get("code");
+        var map = {
+            "403": ["403", "You do not have access to this page.", "Sign in with an account that has permission, or head back to the store."],
+            "500": ["500", "Something went wrong on our side.", "We have been notified. Please try again in a moment."]
+        };
+        if (map[code]) {
+            document.getElementById("errCode").textContent = map[code][0];
+            document.getElementById("errTitle").textContent = map[code][1];
+            document.getElementById("errText").textContent = map[code][2];
+        }
+    })();
+</script>
+
+</body>
+</html>

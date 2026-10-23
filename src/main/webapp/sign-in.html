@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in | SmartTrade</title>
+    <meta name="description" content="Sign in to your SmartTrade account.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<div class="auth">
+        <aside class="auth-aside">
+            <a class="st-logo" href="index.html" aria-label="SmartTrade home"><img src="assets/images/logo/logo-large.png" alt="SmartTrade"></a>
+            <div>
+                <span class="eyebrow">Welcome back</span>
+                <h2>Pick up where you <em>left off</em>.</h2>
+                <ul>
+                    <li><i class="fa-regular fa-badge-check"></i><span>Verified sellers and honest listings</span></li>
+                    <li><i class="fa-regular fa-shield-halved"></i><span>Secure sign-in with e-mail verification</span></li>
+                    <li><i class="fa-solid fa-bolt"></i><span>List a phone in minutes, sell island-wide</span></li>
+                </ul>
+            </div>
+            <div class="foot">&copy; SmartTrade &middot; Buy &amp; sell phones you can trust</div>
+        </aside>
+    <main class="auth-main">
+        <div class="auth-top">
+            <a class="back" href="index.html"><i class="fa-regular fa-arrow-left"></i> Back to store</a>
+            <span>New here? <a href="sign-up.html">Create account</a></span>
+        </div>
+        <div class="auth-card">
+            <div class="auth-mobile-logo"><img src="assets/images/logo/logo.png" alt="SmartTrade"></div>
+
+            <!-- Sign In View -->
+            <div id="signInView">
+                <h1>Sign in</h1>
+                <p class="sub">Welcome back. Enter your details to access your account.</p>
+
+                <form id="signInForm" novalidate>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <div class="input-icon"><i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="email" class="st-input" placeholder="you@example.com" autocomplete="email" required></div>
+                    </div>
+                    <div class="field">
+                        <div class="field-header">
+                            <label for="password">Password</label>
+                            <a href="javascript:void(0)" id="showForgotBtn" class="forgot-link">Forgot password?</a>
+                        </div>
+                        <div class="input-icon has-toggle"><i class="fa-regular fa-lock"></i>
+                            <input type="password" id="password" class="st-input" placeholder="Your password" autocomplete="current-password" required>
+                            <button class="toggle-pass" type="button" data-toggle-pass="password" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div>
+                    </div>
+                    <p class="text-danger small mb-3" id="message" role="alert"></p>
+                    <button type="submit" class="st-btn st-btn-block">Sign in <i class="fa-regular fa-arrow-right"></i></button>
+                </form>
+                <div class="row-split">
+                    <span class="text-secondary">Don&rsquo;t have an account?</span>
+                    <a href="sign-up.html">Join SmartTrade</a>
+                </div>
+            </div>
+
+            <!-- Forgot Password Flow View -->
+            <div id="forgotPasswordView" class="d-none">
+                <!-- Step 1: Request Code -->
+                <div id="forgotStep1">
+                    <span class="auth-step-badge"><i class="fa-solid fa-key"></i> Step 1 of 2</span>
+                    <h1>Reset password</h1>
+                    <p class="sub">Enter your email and we'll send a 6-digit verification code to reset your password.</p>
+
+                    <form id="forgotEmailForm" novalidate>
+                        <div class="field">
+                            <label for="forgotEmail">Email address</label>
+                            <div class="input-icon"><i class="fa-regular fa-envelope"></i>
+                                <input type="email" id="forgotEmail" class="st-input" placeholder="you@example.com" autocomplete="email" required></div>
+                        </div>
+                        <p class="text-danger small mb-3" id="forgotMessage1" role="alert"></p>
+                        <button type="submit" id="sendCodeBtn" class="st-btn st-btn-block">Send reset code <i class="fa-regular fa-paper-plane"></i></button>
+                    </form>
+                    <div class="row-split">
+                        <a href="javascript:void(0)" id="backToSignInBtn" class="text-secondary"><i class="fa-regular fa-arrow-left"></i> Back to sign in</a>
+                        <a href="sign-up.html">Create account</a>
+                    </div>
+                </div>
+
+                <!-- Step 2: Enter Code and New Password -->
+                <div id="forgotStep2" class="d-none">
+                    <span class="auth-step-badge"><i class="fa-solid fa-shield-halved"></i> Step 2 of 2</span>
+                    <h1>Set new password</h1>
+                    <p class="sub">Enter the 6-digit code sent to <strong id="sentCodeEmailText" class="text-white">your email</strong> and pick your new password.</p>
+
+                    <form id="resetPasswordForm" novalidate>
+                        <input type="hidden" id="resetEmail">
+                        <div class="field">
+                            <label for="resetCode">6-digit verification code</label>
+                            <div class="input-icon"><i class="fa-regular fa-shield-check"></i>
+                                <input type="text" id="resetCode" class="st-input auth-code-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required></div>
+                            <div class="help">Didn't receive the code? <a href="javascript:void(0)" id="resendCodeBtn" class="text-decoration-none">Resend code</a></div>
+                        </div>
+                        <div class="field">
+                            <label for="resetNewPassword">New password</label>
+                            <div class="input-icon has-toggle"><i class="fa-regular fa-lock"></i>
+                                <input type="password" id="resetNewPassword" class="st-input" placeholder="8-20 characters" autocomplete="new-password" required>
+                                <button class="toggle-pass" type="button" data-toggle-pass="resetNewPassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div>
+                            <div class="pw-meter" id="resetPwMeter" data-s="0"><i></i><i></i><i></i><i></i></div>
+                            <div class="pw-rules" id="resetPwRules">
+                                <span data-r="len">8-20 characters</span><span data-r="num">a number</span><span data-r="low">lowercase</span><span data-r="up">uppercase</span><span data-r="sp">a symbol (@#$%^&amp;-+=())</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="resetConfirmPassword">Confirm new password</label>
+                            <div class="input-icon has-toggle"><i class="fa-regular fa-lock"></i>
+                                <input type="password" id="resetConfirmPassword" class="st-input" placeholder="Repeat your new password" autocomplete="new-password" required>
+                                <button class="toggle-pass" type="button" data-toggle-pass="resetConfirmPassword" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div>
+                        </div>
+                        <p class="text-danger small mb-3" id="forgotMessage2" role="alert"></p>
+                        <button type="submit" id="resetSubmitBtn" class="st-btn st-btn-block">Reset password &amp; sign in <i class="fa-regular fa-arrow-right"></i></button>
+                    </form>
+                    <div class="row-split">
+                        <a href="javascript:void(0)" id="backToStep1Btn" class="text-secondary"><i class="fa-regular fa-arrow-left"></i> Change email</a>
+                        <a href="javascript:void(0)" id="cancelResetBtn" class="text-secondary">Back to sign in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sign-in.js"></script>
+</body>
+</html>

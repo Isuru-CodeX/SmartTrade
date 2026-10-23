@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create account | SmartTrade</title>
+    <meta name="description" content="Create your SmartTrade account.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<div class="auth">
+        <aside class="auth-aside">
+            <a class="st-logo" href="index.html" aria-label="SmartTrade home"><img src="assets/images/logo/logo-large.png" alt="SmartTrade"></a>
+            <div>
+                <span class="eyebrow">Join SmartTrade</span>
+                <h2>Start trading <em>smarter</em> today.</h2>
+                <ul>
+                    <li><i class="fa-regular fa-badge-check"></i><span>Verified sellers and honest listings</span></li>
+                    <li><i class="fa-regular fa-shield-halved"></i><span>Secure sign-in with e-mail verification</span></li>
+                    <li><i class="fa-solid fa-bolt"></i><span>List a phone in minutes, sell island-wide</span></li>
+                </ul>
+            </div>
+            <div class="foot">&copy; SmartTrade &middot; Buy &amp; sell phones you can trust</div>
+        </aside>
+    <main class="auth-main">
+        <div class="auth-top">
+            <a class="back" href="index.html"><i class="fa-regular fa-arrow-left"></i> Back to store</a>
+            <span>Already a member? <a href="sign-in.html">Sign in</a></span>
+        </div>
+        <div class="auth-card">
+            <div class="auth-mobile-logo"><img src="assets/images/logo/logo.png" alt="SmartTrade"></div>
+            <h1>Create your account</h1>
+            <p class="sub">Create a SmartTrade account to start shopping and manage your trades with ease.</p>
+
+            <form id="signUpForm" novalidate>
+                <div class="row g-3">
+                    <div class="col-sm-6"><div class="field mb-0">
+                        <label for="firstName">First name</label>
+                        <input type="text" id="firstName" class="st-input" autocomplete="given-name" required></div></div>
+                    <div class="col-sm-6"><div class="field mb-0">
+                        <label for="lastName">Last name</label>
+                        <input type="text" id="lastName" class="st-input" autocomplete="family-name" required></div></div>
+                </div>
+                <div class="field mt-3">
+                    <label for="email">Email</label>
+                    <div class="input-icon"><i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="email" class="st-input" placeholder="you@example.com" autocomplete="email" required></div>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <div class="input-icon has-toggle"><i class="fa-regular fa-lock"></i>
+                        <input type="password" id="password" class="st-input" placeholder="8-20 characters" autocomplete="new-password" required>
+                        <button class="toggle-pass" type="button" data-toggle-pass="password" aria-label="Show password"><i class="fa-regular fa-eye"></i></button></div>
+                    <div class="pw-meter" id="pwMeter" data-s="0"><i></i><i></i><i></i><i></i></div>
+                    <div class="pw-rules" id="pwRules">
+                        <span data-r="len">8-20 characters</span><span data-r="num">a number</span><span data-r="low">lowercase</span><span data-r="up">uppercase</span><span data-r="sp">a symbol (e.g. @, #, $, !, _)</span>
+                    </div>
+                </div>
+                <p class="text-danger small mb-3" id="message" role="alert"></p>
+                <button type="submit" class="st-btn st-btn-block">Create account <i class="fa-regular fa-arrow-right"></i></button>
+            </form>
+            <div class="row-split"><span class="text-secondary">We will e-mail you a verification link.</span></div>
+        </div>
+    </main>
+</div>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/sign-up.js"></script>
+</body>
+</html>

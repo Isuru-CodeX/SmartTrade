@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product | SmartTrade</title>
+    <meta name="description" content="Phone details on SmartTrade.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+
+<main class="st-main">
+    <div class="container">
+        <ul class="breadcrumb-st"><li><a href="index.html">Home</a></li><li><a href="search.html">Shop</a></li><li id="crumbTitle">Product</li></ul>
+        <div id="productRoot">
+            <div class="pd">
+                <div class="skeleton" style="aspect-ratio:1;border-radius:22px"></div>
+                <div><div class="skeleton" style="height:40px;width:80%;margin-bottom:1rem"></div><div class="skeleton" style="height:28px;width:40%;margin-bottom:2rem"></div><div class="skeleton" style="height:180px"></div></div>
+            </div>
+        </div>
+
+        <section class="st-section tight" id="descSection" hidden>
+            <div class="panel">
+                <span class="eyebrow">About this phone</span>
+                <div class="prose" id="productDescription"></div>
+            </div>
+        </section>
+
+        <section class="st-section" id="similarSection" hidden>
+            <div class="sec-head"><div><span class="eyebrow">You may also like</span><h2>Similar phones</h2></div></div>
+            <div class="p-grid" id="similarGrid"></div>
+        </section>
+    </div>
+</main>
+
+<footer-content class="st-footer"></footer-content>
+
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/single-product.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart | SmartTrade</title>
+    <meta name="description" content="Review the phones in your cart.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+
+<main class="st-main">
+    <div class="container">
+        <ul class="breadcrumb-st"><li><a href="index.html">Home</a></li><li>Cart</li></ul>
+        <div class="sec-head" style="margin-bottom:1.4rem">
+            <div><h1 class="page-title mb-0">Your cart</h1><p class="page-sub mb-0" id="cartSub"></p></div>
+            <button class="st-btn st-btn-danger st-btn-sm" type="button" id="clearCart"><i class="fa-regular fa-trash"></i> Clear cart</button>
+        </div>
+        <div id="cartRoot"></div>
+    </div>
+</main>
+
+<footer-content class="st-footer"></footer-content>
+
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shop phones | SmartTrade</title>
+    <meta name="description" content="Search and filter phones on SmartTrade.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+
+<main class="st-main">
+    <div class="container">
+        <ul class="breadcrumb-st"><li><a href="index.html">Home</a></li><li>Shop</li></ul>
+        <div class="mb-4">
+            <h1 class="page-title" id="shopTitle">Shop phones</h1>
+            <p class="page-sub" id="shopSub">Filter by brand, condition, colour, storage and price.</p>
+        </div>
+
+        <div class="shop">
+            <aside class="filters" id="filters" aria-label="Filters">
+                <button class="st-iconbtn filters-close" type="button" data-close aria-label="Close filters"><i class="fa-regular fa-xmark"></i></button>
+                <div class="fg"><h6>Brand</h6><div class="chips" id="fBrand"></div></div>
+                <div class="fg"><h6>Condition</h6><div class="chips" id="fQuality"></div></div>
+                <div class="fg"><h6>Colour</h6><div class="chips" id="fColor"></div></div>
+                <div class="fg"><h6>Storage</h6><div class="chips" id="fStorage"></div></div>
+                <div class="fg">
+                    <h6>Price (Rs.)</h6>
+                    <div class="range-row">
+                        <input type="number" class="st-input" id="fMin" min="0" placeholder="Min" aria-label="Minimum price">
+                        <span>&ndash;</span>
+                        <input type="number" class="st-input" id="fMax" min="0" placeholder="Max" aria-label="Maximum price">
+                    </div>
+                    <div class="field mb-0"><div class="help" id="fRange"></div></div>
+                </div>
+                <div class="d-grid gap-2 mt-2">
+                    <button class="st-btn st-btn-sm" type="button" id="fApply">Apply filters</button>
+                    <button class="st-btn st-btn-ghost st-btn-sm" type="button" id="fReset">Reset all</button>
+                </div>
+            </aside>
+
+            <section>
+                <form class="searchbar" id="searchForm" role="search">
+                    <div class="input-icon"><i class="fa-regular fa-magnifying-glass"></i>
+                        <input type="search" class="st-input" id="fQ" placeholder="Search by name, brand, model&hellip;" aria-label="Search products"></div>
+                    <button class="st-btn" type="submit">Search</button>
+                </form>
+
+                <div class="toolbar">
+                    <span class="count">Showing <b id="rangeText">0</b> of <b id="totalText">0</b> phones</span>
+                    <div class="d-flex gap-2 align-items-center">
+                        <button class="st-btn st-btn-ghost st-btn-sm filter-toggle" type="button" data-open-filters><i class="fa-regular fa-sliders"></i> Filters</button>
+                        <select class="form-select" id="fSort" aria-label="Sort by">
+                            <option value="latest">Latest first</option>
+                            <option value="price-asc">Price: low to high</option>
+                            <option value="price-desc">Price: high to low</option>
+                            <option value="name">Name: A to Z</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="active-filters" id="activeFilters"></div>
+
+                <div class="p-grid cols-3" id="results"></div>
+                <nav class="pager" id="pager" aria-label="Pagination"></nav>
+            </section>
+        </div>
+    </div>
+</main>
+
+<footer-content class="st-footer"></footer-content>
+
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SmartTrade | Buy &amp; sell phones you can trust</title>
+    <meta name="description" content="SmartTrade is a marketplace for new and pre-owned phones from verified sellers.">
+    <meta name="theme-color" content="#10171c">
+    <meta property="og:title" content="SmartTrade">
+    <meta property="og:image" content="assets/images/og-image.png">
+    <link rel="icon" href="assets/images/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="assets/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/vendor/font-awesome.css">
+    <link rel="stylesheet" href="assets/css/smarttrade.css">
+    <link rel="stylesheet" href="assets/css/smarttrade-pages.css">
+
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/footer.js"></script>
+</head>
+<body>
+<header-content></header-content>
+
+<main class="st-main">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+        <div class="orb"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <span class="eyebrow">Phone marketplace</span>
+                    <h1>Trade smarter.<br>Own <em>better</em> phones.</h1>
+                    <p class="lead">Discover brand-new and carefully checked pre-owned phones from verified sellers - or turn the one in your drawer into cash in minutes.</p>
+                    <div class="cta">
+                        <a class="st-btn" href="search.html">Shop phones <i class="fa-regular fa-arrow-right"></i></a>
+                        <a class="st-btn st-btn-ghost" href="my-account.html#products"><i class="fa-regular fa-store"></i> Sell yours</a>
+                    </div>
+                    <div class="stats">
+                        <div><b id="statListings">&ndash;</b><span>Live listings</span></div>
+                        <div><b id="statBrands">&ndash;</b><span>Brands</span></div>
+                        <div><b>24h</b><span>Return window</span></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="market" id="heroMarket">
+                        <div class="skeleton skeleton-hero"></div>
+                        <div class="skeleton skeleton-hero"></div>
+                        <div class="skeleton skeleton-hero"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Ticker ===== -->
+    <div class="ticker" aria-hidden="true"><div class="track" id="tickerTrack"></div></div>
+
+    <!-- ===== Brands ===== -->
+    <section class="st-section" id="brands">
+        <div class="container">
+            <div class="sec-head">
+                <div>
+                    <span class="eyebrow">Shop by brand</span>
+                    <h2>Pick your favourite maker</h2>
+                </div>
+                <a class="st-btn st-btn-ghost st-btn-sm" href="search.html">All brands <i class="fa-regular fa-arrow-right"></i></a>
+            </div>
+            <div class="brand-rail" id="brandRail">
+                <div class="skeleton skeleton-brand"></div><div class="skeleton skeleton-brand"></div>
+                <div class="skeleton skeleton-brand"></div><div class="skeleton skeleton-brand"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== New arrivals ===== -->
+    <section class="st-section pt-0" id="new-arrivals">
+        <div class="container">
+            <div class="sec-head">
+                <div>
+                    <span class="eyebrow">Just listed</span>
+                    <h2>New arrivals</h2>
+                </div>
+                <a class="st-btn st-btn-ghost st-btn-sm" href="search.html">View all <i class="fa-regular fa-arrow-right"></i></a>
+            </div>
+            <div class="p-grid" id="newArrivals"></div>
+        </div>
+    </section>
+
+    <!-- ===== Why SmartTrade ===== -->
+    <section class="st-section tight">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature"><div class="ic"><i class="fa-regular fa-badge-check"></i></div><h6>Verified sellers</h6><p>Every seller is reviewed and approved before they can list.</p></div>
+                <div class="feature"><div class="ic"><i class="fa-regular fa-truck-fast"></i></div><h6>Island-wide delivery</h6><p>Standard and express options straight to your door.</p></div>
+                <div class="feature"><div class="ic"><i class="fa-regular fa-arrow-rotate-left"></i></div><h6>24-hour returns</h6><p>Not what you expected? Send it back within a day.</p></div>
+                <div class="feature"><div class="ic"><i class="fa-regular fa-shield-halved"></i></div><h6>Secure checkout</h6><p>Card payments protected end to end. Your data stays yours.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Sell CTA ===== -->
+    <section class="st-section tight pb-0">
+        <div class="container">
+            <div class="cta-band">
+                <span class="eyebrow">For sellers</span>
+                <h2>Got a phone to sell? List it in minutes.</h2>
+                <p>Create a free account, add photos and pricing, and reach buyers across the island.</p>
+                <a class="st-btn" href="my-account.html#products">Start selling <i class="fa-regular fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer-content class="st-footer"></footer-content>
+
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/vendor/popper.min.js"></script>
+<script src="assets/js/vendor/bootstrap.min.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/index.js"></script>
+</body>
+</html>
