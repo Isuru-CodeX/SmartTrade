@@ -20,8 +20,11 @@ import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProductService {
     public String getAllUserProducts(@Context HttpServletRequest request) {
@@ -47,6 +50,15 @@ public class ProductService {
                         responseObject.add("products", new com.google.gson.JsonArray());
                     } else {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMMM dd");
+
+                        // Batch fetch stocks for all products to avoid N+1 query problem
+                        List<Stock> allStocks = hibernateSession.createQuery("FROM Stock s WHERE s.product IN (:products) ORDER BY s.id DESC", Stock.class)
+                                .setParameterList("products", productSet)
+                                .getResultList();
+
+                        Map<Integer, List<Stock>> stockMap = allStocks.stream()
+                                .collect(Collectors.groupingBy(s -> s.getProduct().getId()));
+
                         List<ProductDTO> productDTOList = new ArrayList<>();
                         for (Product p : productSet) {
                             ProductDTO dto = new ProductDTO();
@@ -75,9 +87,7 @@ public class ProductService {
                             }
                             dto.setImages(p.getImages() != null ? new ArrayList<>(p.getImages()) : new ArrayList<>());
 
-                            List<Stock> stocks = hibernateSession.createQuery("FROM Stock s WHERE s.product=:product ORDER BY s.id DESC", Stock.class)
-                                    .setParameter("product", p)
-                                    .getResultList();
+                            List<Stock> stocks = stockMap.getOrDefault(p.getId(), new ArrayList<>());
 
                             List<StockDTO> stockDTOList = new ArrayList<>();
                             String mainStatus = "APPROVED";
