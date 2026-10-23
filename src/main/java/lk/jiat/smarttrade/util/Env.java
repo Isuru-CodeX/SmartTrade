@@ -17,6 +17,14 @@ public class Env {
     }
 
     public static String get(String key){
+        String envValue = System.getenv(key);
+        if (envValue != null) {
+            return envValue;
+        }
+        envValue = System.getenv(key.replace('.', '_').toUpperCase());
+        if (envValue != null) {
+            return envValue;
+        }
         return APP_PROPERTIES.getProperty(key);
     }
     public static Properties getAppProperties(){
