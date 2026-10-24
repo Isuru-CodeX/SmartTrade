@@ -11,6 +11,8 @@ import org.hibernate.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ContentService {
     public String loadNewArrivalProducts() {
@@ -28,6 +30,17 @@ public class ContentService {
                 ") ORDER BY p.createdAt DESC", Product.class)
                 .setMaxResults(10)
                 .getResultList();
+
+        List<Stock> allStocks = new ArrayList<>();
+        if (!productList.isEmpty()) {
+            allStocks = hibernateSession.createQuery(
+                    "SELECT s FROM Stock s LEFT JOIN FETCH s.status WHERE s.product IN (:products)", Stock.class)
+                    .setParameterList("products", productList)
+                    .getResultList();
+        }
+        Map<Integer, List<Stock>> stockMap = allStocks.stream()
+                .collect(Collectors.groupingBy(s -> s.getProduct().getId()));
+
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Product product : productList) {
             ProductDTO productDTO = new ProductDTO();
@@ -38,7 +51,8 @@ public class ContentService {
             productDTO.setImages(product.getImages() != null ? new ArrayList<>(product.getImages()) : new ArrayList<>());
             List<StockDTO> stockDTOList = new ArrayList<>();
             String pStatus = "APPROVED";
-            for (Stock stock : product.getStocks()) {
+            List<Stock> productStocks = stockMap.getOrDefault(product.getId(), new ArrayList<>());
+            for (Stock stock : productStocks) {
                 StockDTO stockDTO = new StockDTO();
                 stockDTO.setProductId(product.getId());
                 stockDTO.setStockId(stock.getId());
