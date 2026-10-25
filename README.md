@@ -1,62 +1,131 @@
-# SmartTrade - Web Programming II (HF2L)
+# SmartTrade
 
-Phone marketplace web application - **Java 17 / Apache Tomcat 9 / Servlet 4.0 (javax.\*) / Jersey 2 (JAX-RS) / Hibernate 5.6 / MySQL 8**.
-Front end: custom dark design system (colours sampled from the SmartTrade logo), HTML5, CSS3, vanilla JavaScript, Fetch API + JSON.
+SmartTrade is a comprehensive phone marketplace web application built with a modern Java backend and a custom, lightweight, responsive frontend. It allows users to browse phones, manage wishlists and shopping carts, and (for approved sellers) list new phones for sale.
 
-## 1. Requirements
-| Tool | Version |
-|---|---|
-| JDK | 17 |
-| Maven | 3.8+ |
-| Apache Tomcat | **9.0.x** (not 10 - this project uses the `javax.*` namespace) |
-| MySQL | 8.x |
+This project was developed for the Web Programming II (HF2L) module.
 
-## 2. Database
+## 🚀 Key Features
+
+* **User Authentication:** Secure sign-up, sign-in, and account verification flows.
+* **Seller Accounts:** Approved sellers can create and manage product listings.
+* **Product Catalog:** Advanced search, filtering (by brand, model, price, etc.), sorting, and pagination.
+* **Shopping Cart & Wishlist:** Client-side storage (localStorage) for seamless cart and wishlist management.
+* **Responsive Design:** Custom dark design system (ink, brand green, highlight) optimized for mobile and desktop, including mobile menus, filter drawers, and cart drawers.
+* **Live Search:** Instant search overlay triggered by `/` or `Ctrl+K`.
+* **Rich Product Descriptions:** Built-in rich text editor for sellers, with rigorous server-side HTML sanitization (XSS-safe).
+* **Automated Emails:** HTML email template builder for verification and password reset emails.
+* **Robust File Uploads:** Secure, collision-resistant product and profile image uploads stored locally.
+
+## 🛠️ Tech Stack
+
+### Backend
+* **Language:** Java 17
+* **Build Tool:** Maven 3.8+
+* **Application Server:** Apache Tomcat 9.0.x (Requires `javax.*` namespace, **not Tomcat 10+**)
+* **REST API:** Jersey 2 (JAX-RS)
+* **ORM:** Hibernate 5.6
+* **Database:** MySQL 8.x
+
+### Frontend
+* HTML5, CSS3, Vanilla JavaScript
+* Fetch API with JSON for asynchronous communication
+* Bundled Poppins font
+* Zero heavy dependencies (jQuery, Slick, etc. removed)
+
+## 📋 Prerequisites
+
+Ensure you have the following installed on your system:
+* JDK 17
+* Maven 3.8+
+* Apache Tomcat 9.0.x (must be 9.0.x)
+* MySQL 8.x
+
+## ⚙️ Configuration & Setup
+
+The application configuration prioritizes Environment Variables over the `app.properties` file for sensitive data, managed via a custom `Env.java` utility.
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd smarttrade
+   ```
+
+2. **Database Setup:**
+   Import the schema and initial data into your MySQL server:
+   ```bash
+   # Create schema + required lookup data (brands, models, etc.)
+   mysql -u root -p < database/smarttrade.sql
+
+   # OPTIONAL: Insert demo seller and 2 demo phones
+   mysql -u root -p < database/smarttrade_demo_data.sql
+   ```
+   *Demo login (if demo script ran): `demo@smarttrade.lk` / `Demo@1234` (verified, approved seller).*
+
+3. **Configure Database Connection:**
+   Update `src/main/resources/hibernate.cfg.xml` with your MySQL connection details (JDBC url, user, password).
+   *Note: `hbm2ddl.auto=update` is set to keep the schema in sync.*
+
+4. **Configure Application Properties:**
+   Edit `src/main/resources/app.properties` or set the following environment variables (using exact match or uppercase underscore format, e.g., `APP_URL`):
+   * `app.url`: Must match the URL you deploy to (e.g., `http://localhost:8080/smarttrade/`).
+   * SMTP Settings for emails (e.g., `mail.smtp.host`, `mail.smtp.port`, `mail.username`, `mail.password`).
+
+## 🏗️ Build & Deploy
+
+### Command Line
 ```bash
-mysql -u root -p < database/smarttrade.sql            # schema + required lookup data
-mysql -u root -p < database/smarttrade_demo_data.sql  # OPTIONAL demo seller + 2 demo phones
-```
-Demo login (only if you ran the demo script): `demo@smarttrade.lk` / `Demo@1234` (verified, approved seller).
-
-Then check the connection details in
-* `src/main/resources/hibernate.cfg.xml` - JDBC url, user, password (`hbm2ddl.auto=update` keeps the schema in sync)
-* `src/main/resources/app.properties` - SMTP (mail) settings and `app.url` (must match the URL you deploy to)
-
-## 3. Build & deploy on Tomcat 9
-```bash
+# Build the WAR file
 mvn clean package
+
+# Copy to Tomcat webapps directory
 cp target/smarttrade.war $CATALINA_HOME/webapps/
-$CATALINA_HOME/bin/startup.sh        # (startup.bat on Windows)
+
+# Start Tomcat (use startup.bat on Windows)
+$CATALINA_HOME/bin/startup.sh
 ```
-Open **http://localhost:8080/smarttrade/**
+Open **http://localhost:8080/smarttrade/** in your browser.
 
-IntelliJ IDEA: *Run > Edit configurations > Tomcat Server (Local)* with a Tomcat **9** home, deployment artifact
-`SmartTrade:war exploded`, application context `/smarttrade`.
-(Optional: `lk.jiat.smarttrade.Main` starts an embedded Tomcat 9 - enable *"Add dependencies with provided scope to classpath"* in the run configuration.)
+### IntelliJ IDEA
+1. Go to *Run > Edit configurations > Add New Configuration > Tomcat Server (Local)*.
+2. Select your Tomcat **9** home directory.
+3. In the Deployment tab, add the artifact `SmartTrade:war exploded`.
+4. Set the Application context to `/smarttrade`.
+*(Optional: Run `lk.jiat.smarttrade.Main` to start an embedded Tomcat 9 server. Ensure "Add dependencies with provided scope to classpath" is enabled in the run configuration).*
 
-## 4. What changed in this version
-**Front end (complete rework)**
-* New dark theme built from the logo palette (`#10171c` ink, `#18a953` brand green, `#1bdb7b` highlight); Poppins bundled locally.
-* Every page redesigned: home, sign in / sign up / verify, my account, shop (advanced search, filters, sorting, pagination), product details, cart, checkout, error page.
-* Responsive (mobile menu, filter drawer, cart drawer), live search overlay (`/` or `Ctrl+K`), wishlist and cart (browser storage).
-* Old Axil theme CSS/JS (jQuery, slick, ...) and the trial-licensed RichTextEditor were removed. The sell form now uses a small built-in editor (`assets/js/editor.js`).
-* Seller HTML descriptions are sanitised before display (XSS-safe); all dynamic text is escaped.
+## 📁 Project Structure
 
-**Back end (Tomcat 9 / JDK 17 compatibility)**
-* `jakarta.*` -> `javax.*`; Hibernate 6.1 -> 5.6.15, Jersey 3 -> 2.41, Jakarta Mail -> JavaMail 1.6.2, Tomcat embed 10 -> 9.
-* Jersey servlet, listener and filters are declared in `WEB-INF/web.xml` (works on a standalone Tomcat, not only the embedded launcher).
-* `SnakeCaseNamingStrategy` keeps the existing lower_snake_case table / column names, so an existing database keeps working on Windows, Linux and macOS.
-* New endpoints: `GET api/data/products` (catalogue with brand/model details), `GET api/users/session` (header sign-in state).
+```
+smarttrade/
+├── database/                # SQL scripts for schema and demo data
+├── src/
+│   ├── main/
+│   │   ├── java/lk/jiat/smarttrade/
+│   │   │   ├── controller/  # Jersey REST API endpoints (e.g., ProductController)
+│   │   │   ├── dto/         # Data Transfer Objects
+│   │   │   ├── entity/      # Hibernate JPA Entities (Product, User, etc.)
+│   │   │   ├── service/     # Business logic
+│   │   │   └── util/        # Utilities (Env.java, HibernateUtil.java)
+│   │   ├── resources/
+│   │   │   ├── app.properties      # App config
+│   │   │   └── hibernate.cfg.xml   # DB config
+│   │   └── webapp/
+│   │       ├── WEB-INF/web.xml     # Servlet configurations
+│   │       ├── assets/             # CSS, JS, Fonts, Images
+│   │       ├── uploads/            # Uploaded product and profile images
+│   │       └── *.html              # Frontend views
+└── pom.xml                  # Maven dependencies and build config
+```
 
-**Bugs fixed**
-* Account verification was impossible: `VerificationController` required a logged-in user.
-* Uploaded image URLs contained the absolute disk path (broken images) - they are now `http://.../uploads/product/{id}/{file}`; file names are unique even for simultaneous uploads.
-* `ProfileService` null pointer exceptions when an address had no line 2 / postal code; the first saved address now becomes the primary address.
-* `AuthAccessFilter` set cache headers after the response was committed.
-* The cart icon called an undefined `viewCart()`; the debug `TestController` and scratch test class were removed.
+## ⚠️ Known Limitations & Future Improvements
 
-## 5. Known limitations (be ready to explain them in the viva)
-* Shopping cart and wishlist live in the browser (`localStorage`); there is no order / payment-gateway back end yet - the checkout page validates the form and explains this.
-* A user can only sell if a row exists in `seller` with status `APPROVED` (the demo script creates one). There is no seller-registration screen.
-* Passwords are stored in plain text and returned by `api/profiles/user-profile`; hash them (e.g. BCrypt) before any real use.
-* Database and SMTP credentials are in plain text config files - move them to environment variables for deployment.
+* **Storage:** Shopping cart and wishlist live in the browser (`localStorage`). There is currently no backend order processing or payment gateway integration. The checkout page validates the form and explains this limitation.
+* **Seller Registration:** A user can only list products if a row exists in the `seller` table with status `APPROVED`. There is currently no self-service seller registration screen (the demo SQL script creates one).
+* **Security:** Passwords are currently stored in plain text and returned by `api/profiles/user-profile`. They should be hashed (e.g., using BCrypt) before production use.
+* **Credentials:** Database and SMTP credentials are in plain text config files. It is recommended to use environment variables for deployment.
+
+## 📝 Recent Updates
+
+* **Complete Frontend Rework:** Replaced old Axil theme with a custom dark theme built from the logo palette. Removed heavy dependencies like jQuery and slick.
+* **Backend Modernization:** Ensured strict compatibility with Tomcat 9 and JDK 17 (`jakarta.*` reverted to `javax.*`, Hibernate downgraded to 5.6.15, Jersey to 2.41).
+* **Database Compatibility:** Implemented `SnakeCaseNamingStrategy` to maintain existing lower_snake_case table/column names across different OS file systems.
+* **Bug Fixes:** Resolved account verification issues, absolute image path bugs, and NPEs in address handling.
