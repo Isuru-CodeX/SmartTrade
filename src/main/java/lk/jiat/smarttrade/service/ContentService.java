@@ -28,6 +28,17 @@ public class ContentService {
                 ") ORDER BY p.createdAt DESC", Product.class)
                 .setMaxResults(10)
                 .getResultList();
+
+        // ⚡ Bolt: Batch fetch stocks for products to avoid N+1 queries in the loop
+        java.util.Map<Integer, List<Stock>> stockMap = new java.util.HashMap<>();
+        if (!productList.isEmpty()) {
+            List<Stock> allStocks = hibernateSession.createQuery(
+                    "FROM Stock s WHERE s.product IN (:products)", Stock.class)
+                    .setParameterList("products", productList)
+                    .getResultList();
+            stockMap = allStocks.stream().collect(java.util.stream.Collectors.groupingBy(s -> s.getProduct().getId()));
+        }
+
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Product product : productList) {
             ProductDTO productDTO = new ProductDTO();
@@ -38,7 +49,9 @@ public class ContentService {
             productDTO.setImages(product.getImages() != null ? new ArrayList<>(product.getImages()) : new ArrayList<>());
             List<StockDTO> stockDTOList = new ArrayList<>();
             String pStatus = "APPROVED";
-            for (Stock stock : product.getStocks()) {
+
+            List<Stock> productStocks = stockMap.getOrDefault(product.getId(), new ArrayList<>());
+            for (Stock stock : productStocks) {
                 StockDTO stockDTO = new StockDTO();
                 stockDTO.setProductId(product.getId());
                 stockDTO.setStockId(stock.getId());
@@ -75,12 +88,21 @@ public class ContentService {
                     "LEFT JOIN FETCH p.quality " +
                     "LEFT JOIN FETCH p.model m " +
                     "LEFT JOIN FETCH m.brand " +
-                    "LEFT JOIN FETCH p.stocks s " +
-                    "LEFT JOIN FETCH s.status " +
                     "WHERE NOT EXISTS (" +
                     "   SELECT s2 FROM Stock s2 WHERE s2.product = p AND s2.status.value = 'REJECTED'" +
                     ") ORDER BY p.createdAt DESC", Product.class)
                     .getResultList();
+
+            // ⚡ Bolt: Batch fetch stocks for products to avoid Cartesian product memory issues and N+1 problems
+            java.util.Map<Integer, List<Stock>> stockMap = new java.util.HashMap<>();
+            if (!productList.isEmpty()) {
+                List<Stock> allStocks = hibernateSession.createQuery(
+                        "FROM Stock s LEFT JOIN FETCH s.status WHERE s.product IN (:products)", Stock.class)
+                        .setParameterList("products", productList)
+                        .getResultList();
+                stockMap = allStocks.stream().collect(java.util.stream.Collectors.groupingBy(s -> s.getProduct().getId()));
+            }
+
             List<ProductDTO> productDTOList = new ArrayList<>();
             for (Product product : productList) {
                 ProductDTO productDTO = new ProductDTO();
@@ -100,7 +122,9 @@ public class ContentService {
                 productDTO.setImages(product.getImages() != null ? new ArrayList<>(product.getImages()) : new ArrayList<>());
                 List<StockDTO> stockDTOList = new ArrayList<>();
                 String pStatus = "APPROVED";
-                for (Stock stock : product.getStocks()) {
+
+                List<Stock> productStocks = stockMap.getOrDefault(product.getId(), new ArrayList<>());
+                for (Stock stock : productStocks) {
                     StockDTO stockDTO = new StockDTO();
                     stockDTO.setProductId(product.getId());
                     stockDTO.setStockId(stock.getId());
