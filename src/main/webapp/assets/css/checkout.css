@@ -1,0 +1,75 @@
+/* ==========================================================================
+   SmartTrade Checkout Stylesheet
+   ========================================================================== */
+
+.stripe-checkout-box {
+    background: var(--st-surface-2, #1a252d);
+    border: 1px solid var(--st-line-2, #2c3d49);
+}
+.stripe-brand-icon {
+    font-size: 1.8rem;
+    color: var(--st-brand-3, #2bd97f);
+}
+.stripe-card-title {
+    font-size: 0.95rem;
+}
+.card-brand-badge {
+    background: #f2f5f4;
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+.card-input-wrap {
+    position: relative;
+}
+.card-brand-indicator {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--st-muted, #8b9ca6);
+    font-size: 1.25rem;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+.card-element-mount {
+    padding: 12px 14px;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    background: var(--st-surface, #141d24);
+    border: 1px solid var(--st-line-2, #2c3d49);
+    border-radius: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.card-element-mount:focus-within,
+.card-element-mount.StripeElement--focus {
+    border-color: var(--st-brand-3, #2bd97f);
+    box-shadow: 0 0 0 3px rgba(43, 217, 127, 0.15);
+}
+.card-element-mount.StripeElement--invalid {
+    border-color: #ff6b78;
+}
+.card-element-mount > div {
+    width: 100%;
+}
+.card-sandbox-hint {
+    background: rgba(43, 217, 127, 0.08);
+    border: 1px dashed rgba(43, 217, 127, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--st-muted, #8b9ca6);
+}
+.card-errors-box {
+    display: none;
+}
+.card-errors-box:not(:empty) {
+    display: block;
+}
+.text-brand-green {
+    color: var(--st-brand-3, #2bd97f);
+}
+.text-st-muted {
+    color: var(--st-muted);
+}
