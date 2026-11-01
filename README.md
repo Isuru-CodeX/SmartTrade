@@ -9,7 +9,7 @@ This project was developed for the Web Programming II (HF2L) module, providing a
 - **User Authentication:** Secure sign-up, sign-in, and account verification flows.
 - **Seller Accounts:** Approved sellers can create and manage product listings.
 - **Product Catalog:** Advanced search, filtering (by brand, model, price, etc.), sorting, and pagination.
-- **Shopping Cart & Wishlist:** Client-side storage (localStorage) for seamless cart and wishlist management.
+- **Shopping Cart & Wishlist:** Backend functionality with Hibernate entities (like `CartService.java` and `Cart.java`) and REST API instead of just client-side storage.
 - **Responsive Design:** Custom dark design system (ink, brand green, highlight) optimized for mobile and desktop, including mobile menus, filter drawers, and cart drawers.
 - **Live Search:** Instant search overlay triggered by `/` or `Ctrl+K`.
 - **Rich Product Descriptions:** Built-in rich text editor for sellers, with rigorous server-side HTML sanitization (XSS-safe).
@@ -23,10 +23,6 @@ This project was developed for the Web Programming II (HF2L) module, providing a
 - **Database:** MySQL 8.x, Hibernate 5.6
 - **Tools:** Git, GitHub, Maven 3.8+
 - **Application Server:** Apache Tomcat 9.0.x (Requires `javax.*` namespace)
-
-## Screenshots
-
-![Application Screenshot](src/main/webapp/assets/images/og-image.png)
 
 ## Prerequisites
 
@@ -162,7 +158,7 @@ mvn test
 
 ## Known Issues
 
-- **Storage:** Shopping cart and wishlist live in the browser (`localStorage`). There is currently no backend order processing or payment gateway integration. The checkout page validates the form and explains this limitation.
+- **Storage:** There is currently no backend order processing or payment gateway integration. The checkout page validates the form and explains this limitation.
 - **Seller Registration:** A user can only list products if a row exists in the `seller` table with status `APPROVED`. There is currently no self-service seller registration screen.
 - **Security:** Passwords are currently stored in plain text and returned by `api/profiles/user-profile`. They should be hashed (e.g., using BCrypt) before production use.
 - **Credentials:** Database and SMTP credentials are in plain text config files. It is recommended to use environment variables for deployment.
