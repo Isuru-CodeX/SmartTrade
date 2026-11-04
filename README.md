@@ -1,83 +1,145 @@
-# SmartTrade
+<div align="center">
 
-SmartTrade is a comprehensive phone marketplace web application built with a modern Java backend and a custom, lightweight, responsive frontend. It allows users to browse phones, manage wishlists and shopping carts, and (for approved sellers) list new phones for sale.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:10b981,100:064e3b&height=230&section=header&text=SmartTrade&fontSize=72&fontColor=ffffff&animation=fadeIn&fontAlignY=36&desc=Phone%20Marketplace%20%E2%80%A2%20Java%20%2B%20Hibernate&descAlignY=58&descSize=20" width="100%" alt="SmartTrade banner" />
 
-This project was developed for the Web Programming II (HF2L) module, providing a robust solution for buying and selling mobile devices.
+<a href="https://github.com/Isuru-CodeX/SmartTrade">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=900&color=10B981&center=true&vCenter=true&width=700&lines=Buy+and+sell+phones+online;Java+17+%7C+Jersey+REST+%7C+Hibernate+%7C+MySQL;Wishlist%2C+cart+and+live+search+(Ctrl%2BK);Custom+dark+design+system%2C+fully+responsive" alt="Typing animation" />
+</a>
 
-## Features
+<br/>
 
-- **User Authentication:** Secure sign-up, sign-in, and account verification flows.
-- **Seller Accounts:** Approved sellers can create and manage product listings.
-- **Product Catalog:** Advanced search, filtering (by brand, model, price, etc.), sorting, and pagination.
-- **Shopping Cart & Wishlist:** Backend functionality with Hibernate entities (like `CartService.java` and `Cart.java`) and REST API instead of just client-side storage.
-- **Responsive Design:** Custom dark design system (ink, brand green, highlight) optimized for mobile and desktop, including mobile menus, filter drawers, and cart drawers.
-- **Live Search:** Instant search overlay triggered by `/` or `Ctrl+K`.
-- **Rich Product Descriptions:** Built-in rich text editor for sellers, with rigorous server-side HTML sanitization (XSS-safe).
-- **Automated Emails:** HTML email template builder for verification and password reset emails.
-- **Robust File Uploads:** Secure, collision-resistant product and profile image uploads stored locally.
+<p>
+  <img src="https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Jersey-JAX--RS-0A66C2?style=for-the-badge&logo=jakartaee&logoColor=white" alt="Jersey" />
+  <img src="https://img.shields.io/badge/Hibernate-5.6-59666C?style=for-the-badge&logo=hibernate&logoColor=white" alt="Hibernate" />
+  <img src="https://img.shields.io/badge/MySQL-8.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />
+  <img src="https://img.shields.io/badge/Tomcat-9.0.x-F8DC75?style=for-the-badge&logo=apachetomcat&logoColor=black" alt="Tomcat" />
+</p>
 
-## Technologies Used
+<p>
+  <img src="https://img.shields.io/github/last-commit/Isuru-CodeX/SmartTrade?style=flat-square&logo=git&color=green" alt="last commit" />
+  <img src="https://img.shields.io/github/commit-activity/t/Isuru-CodeX/SmartTrade?style=flat-square&color=blue" alt="commits" />
+  <img src="https://img.shields.io/github/repo-size/Isuru-CodeX/SmartTrade?style=flat-square&color=purple" alt="repo size" />
+  <img src="https://img.shields.io/github/stars/Isuru-CodeX/SmartTrade?style=flat-square&logo=github&color=yellow" alt="stars" />
+</p>
 
-- **Frontend:** HTML5, CSS3, Vanilla JavaScript, Fetch API
-- **Backend:** Java 17, Jersey 2 (JAX-RS), Servlet 4.0
-- **Database:** MySQL 8.x, Hibernate 5.6
-- **Tools:** Git, GitHub, Maven 3.8+
-- **Application Server:** Apache Tomcat 9.0.x (Requires `javax.*` namespace)
+<p>
+  <a href="#-features"><b>✨ Features</b></a> •
+  <a href="#-architecture"><b>🏗️ Architecture</b></a> •
+  <a href="#-getting-started"><b>🚀 Get Started</b></a> •
+  <a href="#-project-structure"><b>📂 Structure</b></a> •
+  <a href="#-roadmap"><b>🗺️ Roadmap</b></a>
+</p>
 
-## Prerequisites
+</div>
 
-Before running the project, install the required software:
+---
 
-- JDK 17
-- Maven 3.8+
-- Apache Tomcat 9.0.x (must be 9.0.x, not 10+)
-- MySQL 8.x
-- Git
+## 📱 About
 
-## Installation
+**SmartTrade** is a comprehensive **phone marketplace** web app with a modern Java backend and a custom, lightweight, responsive frontend. Users can browse phones, manage **wishlists** and **shopping carts**, and approved **sellers** can list new phones for sale.
 
-1. Clone the repository:
+Built for the **Web Programming II (HF2L)** module as a complete solution for buying and selling mobile devices.
 
-   ```bash
-   git clone https://github.com/your-username/smarttrade.git
-   ```
+<!--
+📸 SCREENSHOTS: add your images to an /assets folder, then uncomment this block.
 
-2. Open the project directory:
+<div align="center">
+  <img src="./assets/home.png" width="48%" alt="Home" />
+  <img src="./assets/catalog.png" width="48%" alt="Catalogue" />
+  <img src="./assets/product.png" width="48%" alt="Product page" />
+  <img src="./assets/seller.png" width="48%" alt="Seller dashboard" />
+</div>
+-->
 
-   ```bash
-   cd smarttrade
-   ```
+---
 
-3. Build the project using Maven to install dependencies:
+## ✨ Features
 
-   ```bash
-   mvn clean package
-   ```
+| | Feature | Details |
+|---|---|---|
+| 🔐 | **Authentication** | Sign-up, sign-in and account verification flows |
+| 🏪 | **Seller accounts** | Approved sellers create and manage product listings |
+| 📚 | **Product catalogue** | Advanced search, filters (brand, model, price…), sorting and pagination |
+| 🛒 | **Cart and wishlist** | Stored server-side with Hibernate entities and a REST API, not just in the browser |
+| 🎨 | **Responsive design system** | Custom dark theme (ink, brand green, highlight) with mobile menu, filter drawer and cart drawer |
+| ⚡ | **Live search** | Instant search overlay, open it with <kbd>/</kbd> or <kbd>Ctrl</kbd> + <kbd>K</kbd> |
+| ✍️ | **Rich product descriptions** | Built-in rich text editor with strict server-side HTML sanitization (XSS-safe) |
+| 📧 | **Automated emails** | HTML email template builder for verification and password reset |
+| 🖼️ | **Secure image uploads** | Collision-resistant product and profile image uploads stored locally |
 
-4. Configure the database and environment variables as described below.
+---
 
-## Database Setup
+## 🏗️ Architecture
 
-1. Start your MySQL database server.
-2. Create the required schema and import the lookup data:
-   ```bash
-   mysql -u root -p < database/smarttrade.sql
-   ```
-3. *(Optional)* Insert a demo seller and sample products:
-   ```bash
-   mysql -u root -p < database/smarttrade_demo_data.sql
-   ```
-   *Demo login (if demo script ran): `demo@smarttrade.lk` / `Demo@1234` (verified, approved seller).*
-4. Configure the database connection using your local environment settings by updating `src/main/resources/hibernate.cfg.xml`.
-   *Note: `hbm2ddl.auto=update` is set to keep the schema in sync.*
+```mermaid
+flowchart LR
+    A["🌐 Frontend<br/>HTML · CSS · JS · Fetch API"] -->|REST / JSON| B["🧩 Jersey (JAX-RS)<br/>controller/"]
+    B --> C["⚙️ Services<br/>business logic"]
+    C --> D["🗂️ Hibernate entities"]
+    D --> E[("🐬 MySQL 8")]
+    C --> F["📧 Email builder"]
+    C --> G["🖼️ File uploads"]
+```
 
-## Configuration
+---
 
-The application configuration prioritizes Environment Variables over the `app.properties` file for sensitive data, managed via a custom `Env.java` utility.
+## 🛠️ Tech Stack
 
-Create the required configuration file `src/main/resources/app.properties` or set environment variables (using exact match or uppercase underscore format, e.g., `APP_URL`).
+<div align="center">
 
-Example `app.properties`:
+<img src="https://skillicons.dev/icons?i=java,html,css,js,mysql,maven,git,github,idea&theme=dark" alt="tech stack icons" />
+
+</div>
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript, Fetch API |
+| **Backend** | Java 17, Jersey 2 (JAX-RS), Servlet 4.0 |
+| **Database** | MySQL 8.x, Hibernate 5.6 |
+| **Server** | Apache Tomcat **9.0.x** (needs the `javax.*` namespace) |
+| **Tools** | Git, GitHub, Maven 3.8+ |
+
+---
+
+## 🚀 Getting Started
+
+### ✅ Prerequisites
+
+- ☕ JDK 17
+- 📦 Maven 3.8+
+- 🐱 Apache Tomcat **9.0.x** *(must be 9.0.x, not 10+)*
+- 🐬 MySQL 8.x
+- 🔧 Git
+
+### 📥 Installation
+
+```bash
+# 1️⃣ Clone the repository
+git clone https://github.com/Isuru-CodeX/SmartTrade.git
+cd SmartTrade
+
+# 2️⃣ Build the project
+mvn clean package
+```
+
+### 🗄️ Database setup
+
+```bash
+# Schema + lookup data
+mysql -u root -p < database/smarttrade.sql
+
+# (Optional) demo seller and sample products
+mysql -u root -p < database/smarttrade_demo_data.sql
+```
+
+> 🔑 **Demo login** (if the demo script ran): `demo@smarttrade.lk` / `Demo@1234`, a verified, approved seller.
+
+Then set your connection details in `src/main/resources/hibernate.cfg.xml`. `hbm2ddl.auto=update` is enabled to keep the schema in sync.
+
+### ⚙️ Configuration
+
+Settings are read from **environment variables first**, then `src/main/resources/app.properties` (via the `Env.java` utility):
 
 ```properties
 app.url=http://localhost:8080/smarttrade/
@@ -87,99 +149,119 @@ mail.username=your_username
 mail.password=your_password
 ```
 
-**Do not commit real passwords, API keys, or other secrets.**
+> 🔒 **Never commit real passwords or API keys.** Environment variables use uppercase underscore names, e.g. `APP_URL`.
 
-## Running the Project
+### ▶️ Run it
 
-### Command Line
+<details open>
+<summary><b>💻 Command line</b></summary>
 
-1. Build the WAR file:
-   ```bash
-   mvn clean package
-   ```
+<br/>
 
-2. Copy to Tomcat webapps directory:
-   ```bash
-   cp target/smarttrade.war $CATALINA_HOME/webapps/
-   ```
-
-3. Start Tomcat:
-   ```bash
-   $CATALINA_HOME/bin/startup.sh
-   # On Windows use: startup.bat
-   ```
-
-4. Open **http://localhost:8080/smarttrade/** in your browser.
-
-### IntelliJ IDEA
-
-1. Go to *Run > Edit configurations > Add New Configuration > Tomcat Server (Local)*.
-2. Select your Tomcat **9** home directory.
-3. In the Deployment tab, add the artifact `smarttrade:war exploded`.
-4. Set the Application context to `/smarttrade`.
-*(Optional: Run `lk.jiat.smarttrade.Main` to start an embedded Tomcat 9 server. Ensure "Add dependencies with provided scope to classpath" is enabled in the run configuration).*
-
-## Project Structure
-
-```text
-smarttrade/
-├── src/
-│   ├── main/
-│   │   ├── java/lk/jiat/smarttrade/
-│   │   │   ├── controller/  # Jersey REST API endpoints
-│   │   │   ├── dto/         # Data Transfer Objects
-│   │   │   ├── entity/      # Hibernate JPA Entities
-│   │   │   ├── service/     # Business logic
-│   │   │   └── util/        # Utilities (Env.java, HibernateUtil.java)
-│   │   ├── resources/
-│   │   │   ├── app.properties      # App config
-│   │   │   └── hibernate.cfg.xml   # DB config
-│   │   └── webapp/
-│   │       ├── WEB-INF/web.xml     # Servlet configurations
-│   │       ├── assets/             # CSS, JS, Fonts, Images
-│   │       ├── uploads/            # Uploaded product and profile images
-│   │       └── *.html              # Frontend views
-├── database/                # SQL scripts for schema and demo data
-├── target/                  # Compiled artifacts
-├── .gitignore
-├── pom.xml                  # Maven dependencies and build config
-└── README.md
+```bash
+mvn clean package
+cp target/smarttrade.war $CATALINA_HOME/webapps/
+$CATALINA_HOME/bin/startup.sh      # on Windows: startup.bat
 ```
 
-## Testing
+Open **http://localhost:8080/smarttrade/**
 
-To verify compilation and ensure no syntax errors were introduced, run:
+</details>
+
+<details>
+<summary><b>🧠 IntelliJ IDEA</b></summary>
+
+<br/>
+
+1. **Run → Edit Configurations → Add New → Tomcat Server (Local)**
+2. Select your Tomcat **9** home directory
+3. In **Deployment**, add the artifact `smarttrade:war exploded`
+4. Set the application context to `/smarttrade`
+
+*(Optional)* Run `lk.jiat.smarttrade.Main` for an embedded Tomcat 9. Enable "Add dependencies with provided scope to classpath" in the run configuration.
+
+</details>
+
+---
+
+## 📂 Project Structure
+
+```bash
+SmartTrade/
+├── 📁 src/main/
+│   ├── 📁 java/lk/jiat/smarttrade/
+│   │   ├── 📁 controller/     # Jersey REST API endpoints
+│   │   ├── 📁 dto/            # Data Transfer Objects
+│   │   ├── 📁 entity/         # Hibernate / JPA entities
+│   │   ├── 📁 service/        # Business logic
+│   │   └── 📁 util/           # Env.java, HibernateUtil.java
+│   ├── 📁 resources/          # app.properties, hibernate.cfg.xml
+│   └── 📁 webapp/
+│       ├── 📁 WEB-INF/        # web.xml
+│       ├── 📁 assets/         # CSS, JS, fonts, images
+│       ├── 📁 uploads/        # Product and profile images
+│       └── 📄 *.html          # Frontend views
+├── 📁 database/               # Schema and demo-data SQL
+├── 📄 pom.xml
+└── 📄 README.md
+```
+
+---
+
+## 🧪 Testing
 
 ```bash
 mvn test
 ```
 
-*Note: The project currently has no automated tests defined; running `mvn test` is primarily useful for verifying compilation.*
+> ℹ️ There are no automated tests yet, so `mvn test` mainly verifies that the project compiles.
 
-## Known Issues
+---
 
-- **Storage:** There is currently no backend order processing or payment gateway integration. The checkout page validates the form and explains this limitation.
-- **Seller Registration:** A user can only list products if a row exists in the `seller` table with status `APPROVED`. There is currently no self-service seller registration screen.
-- **Security:** Passwords are currently stored in plain text and returned by `api/profiles/user-profile`. They should be hashed (e.g., using BCrypt) before production use.
-- **Credentials:** Database and SMTP credentials are in plain text config files. It is recommended to use environment variables for deployment.
+## ⚠️ Known Issues
 
-## Future Improvements
+- 💳 **Orders and payments:** there is currently no backend order processing or payment gateway. The checkout page validates the form and explains this limitation.
+- 🏪 **Seller registration:** products can only be listed if a row exists in the `seller` table with status `APPROVED`. There's no self-service seller registration screen yet.
+- 🔐 **Passwords:** currently stored in plain text and returned by `api/profiles/user-profile`. **Hash them (e.g. BCrypt) before any production use.**
+- 🔑 **Credentials:** database and SMTP credentials live in plain-text config. Prefer environment variables when deploying.
 
-- Integrate a secure password hashing mechanism (e.g., BCrypt).
-- Implement a backend order processing system and payment gateway.
-- Create a self-service seller registration and approval workflow.
-- Move away from plain text credentials to an environment variables-only approach for production deployment.
+---
 
-## Contributing
+## 🗺️ Roadmap
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
+- [x] Product catalogue with search, filters, sorting and pagination
+- [x] Server-side cart and wishlist via REST API
+- [x] Seller listings with a sanitized rich text editor
+- [x] Verification and password-reset emails
+- [ ] Secure password hashing (BCrypt)
+- [ ] Backend order processing and payment gateway
+- [ ] Self-service seller registration and approval workflow
+- [ ] Environment-variables-only configuration for production
 
-Contributions are welcome!
+---
 
-## License
+## 🤝 Contributing
 
-This project was developed for educational purposes. It is currently not licensed under any specific open-source license.
+1. 🍴 Fork the repository
+2. 🌿 Create a branch: `git checkout -b feature-branch`
+3. 💾 Commit: `git commit -m "Add some feature"`
+4. 📤 Push: `git push origin feature-branch`
+5. 🔃 Open a Pull Request
+
+## 📜 License
+
+Developed for **educational purposes**. It is currently not licensed under a specific open-source license.
+
+---
+
+<div align="center">
+
+### 📬 Connect with me
+
+<a href="https://github.com/Isuru-CodeX"><img src="https://img.shields.io/badge/GitHub-Isuru--CodeX-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" /></a>
+
+⭐ **If you like SmartTrade, give it a star!** ⭐
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:10b981,100:064e3b&height=120&section=footer" width="100%" alt="footer" />
+
+</div>
